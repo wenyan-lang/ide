@@ -1,0 +1,9 @@
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/embed"
+    [headers.values]
+      Access-Control-Allow-Origin = "*"

@@ -389,7 +389,8 @@ function openFile(name) {
 }
 
 function loadFile(name = currentFile.name) {
-  if (currentFile.name !== name) {
+  const newFile = currentFile.name !== name
+  if (newFile) {
     currentFile = Files[name] || examples[name];
     if (!currentFile) {
       currentFile = { name, code: "" };
@@ -404,8 +405,12 @@ function loadFile(name = currentFile.name) {
   updateExplorerList();
   deleteBtn.classList.toggle("hidden", !!currentFile.readonly);
 
-  if (currentFile.name !== name) {
-    crun();
+  if (newFile) {
+    if (currentFile.readonly) {
+      crun();
+    } else {
+      resetOutput()
+    }
   }
 }
 
@@ -546,6 +551,7 @@ function resetOutput() {
   outIframe.classList.toggle("hidden", false);
   outRender.classList.toggle("hidden", true);
   downloadRenderBtn.classList.toggle("hidden", true);
+  jsCM.setValue('')
   renderedSVGs = [];
 }
 
@@ -864,3 +870,5 @@ else {
   initExplorer();
 }
 setView();
+
+document.body.style = ''

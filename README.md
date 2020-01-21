@@ -4,7 +4,7 @@ https://wenyan-ide.netlify.com/
 
 ![](https://github.com/wenyan-lang/wenyan/raw/master/screenshots/screenshot02.png)
 
-## Embedded
+## Embed
 
 You can embed the Online IDE into your own website by using [iframe](https://www.w3schools.com/tags/tag_iframe.asp).
 

@@ -5,7 +5,7 @@
   "description": "Online IDE for wenyan-lang",
   "main": "index.js",
   "scripts": {
-    "dev": "live-server static --entry-file=index.html"
+    "dev": "live-server static --entry-file=index.html --cors"
   },
   "keywords": [
     "wenyan",
