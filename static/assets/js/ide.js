@@ -186,6 +186,25 @@ function initEmbed() {
 
   if (query.get('autorun') != null)
     crun()
+
+  window.addEventListener('message', (e) => {
+    const { action, field, value } = e.data || {}
+    if (action === 'config') {
+      Config[field] = value
+    } else if (action === 'title') {
+      currentFile.name = value
+      loadFile()
+    } else if (action === 'code') {
+      currentFile.code = value
+      loadFile()
+    } else if (action === 'run') {
+      crun()
+    } else if (action === 'clear') {
+      resetOutput()
+    } else {
+      throw new Error('Invalid command ' + JSON.stringify(e.data))
+    }
+  })
 }
 
 
@@ -790,6 +809,14 @@ jsCM.setSize(null, "100%");
 
 editorCM.on("change", e => {
   if (savingLock) return;
+
+  if (EMBED) {
+    window.parent.postMessage({
+      source: 'wenyan-ide',
+      action: 'change',
+      value: editorCM.getValue()
+    }, '*')
+  }
 
   if (!currentFile.readonly) {
     currentFile.code = editorCM.getValue();
