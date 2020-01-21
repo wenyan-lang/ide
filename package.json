@@ -5,7 +5,7 @@
   "description": "Online IDE for wenyan-lang",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "live-server static --entry-file=index.html"
   },
   "keywords": [
     "wenyan",
@@ -13,5 +13,8 @@
     "ide"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  }
 }
