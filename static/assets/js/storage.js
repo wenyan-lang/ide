@@ -1,40 +1,41 @@
 /**
  * Make reactive localStorage binding
  *
- * @param {*} key
+ * @param {string} key
  * @param {*} [defaultValue={}]
  * @param {*} [storage=localStorage]
- * @param {boolean} [save=true]
  * @returns
  */
 function Storage(key, defaultValue = {}, storage = localStorage) {
   const handlers = {}
-  let data = defaultValue
-  let raw = storage.getItem(key);
+  const data = defaultValue
+  const raw = storage && storage.getItem(key);
 
   if (raw) {
     const parsed = JSON.parse(raw)
     Object.assign(data, parsed)
   }
 
-  const on = (eventName, handler) => {
-    if (!handlers[eventName])
-      handlers[eventName] = [];
-    handlers[eventName].push(handler);
+  const on = (prop, handler, immediate = false) => {
+    if (!handlers[prop])
+      handlers[prop] = [];
+    handlers[prop].push(handler);
+    if (immediate)
+      handler(data[prop])
   }
 
-  const off = (eventName, handler) => {
-    if (!handlers[eventName])
+  const off = (prop, handler) => {
+    if (!handlers[prop])
       return
-    const idx = handlers[eventName].indexOf(handler)
+    const idx = handlers[prop].indexOf(handler)
     if (idx >= 0)
-      handlers[eventName].splice(idx, 1)
+      handlers[prop].splice(idx, 1)
   }
 
-  const emit = (eventName, data) => {
-    if (!handlers[eventName])
+  const emit = (prop, data) => {
+    if (!handlers[prop])
       return
-    for (const handler of handlers[eventName])
+    for (const handler of handlers[prop])
       handler(data);
   }
 

@@ -1,4 +1,9 @@
-const LOCAL_STORAGE_KEY = "wenyang-ide";
+const EMBED = window.location.pathname === "/embed";
+
+if (EMBED) {
+  console.debug('Working in Embedded mode')
+  document.body.classList.toggle('embed', true)
+}
 
 const TITLE = " - 文言 Wenyan Online IDE";
 const Config = Storage('wenyan-ide-config', {
@@ -9,12 +14,13 @@ const Config = Storage('wenyan-ide-config', {
   outputHanzi: true,
   hideImported: true,
   strict: false
-})
+}, EMBED ? null : localStorage)
 const WygStore = Storage('wenyan-ide-wyg', {
   packages: [],
   last_updated: -Infinity
 })
-const Files = Storage('wenyan-ide-files', {})
+const Files = Storage('wenyan-ide-files', {
+}, EMBED ? null : localStorage)
 
 const PACKAGES_LIFETIME = 1000 * 60 * 60; // 60 min
 const EXPLORER_WIDTH_MIN = 0;
@@ -25,7 +31,6 @@ const OUTPUT_HEIGHT_MIN = 36;
 const AUTOCOMPLETE_TRIGGER_REGEX = /[\d\w\.,'"\/]+$/;
 const CONTROL_KEYCODES = [13, 37, 38, 39, 40, 9, 27]; // Enter, Arrow Keys, etc
 
-const EMBED = window.location.pathname === "/embed";
 const djs = document.getElementById("js-outer");
 const din = document.getElementById("in-outer");
 const dou = document.getElementById("out-outer");
@@ -51,11 +56,6 @@ const packageInfoPanel = document.getElementById("package-info-panel");
 let handv = window.innerWidth * 0.6;
 let handh = window.innerHeight * 0.7;
 let handex = window.innerWidth * 0.15;
-
-if (EMBED) {
-  handex = 0;
-  handv = window.innerWidth * 0.5;
-}
 
 var currentFile = {};
 var renderedSVGs = [];
@@ -150,23 +150,42 @@ function initConfigComponents() {
   }
 }
 
-function loadState() {
-  if (EMBED) {
-    const query = new URLSearchParams(location.search);
-    for (const key of Object.keys(Config)) {
-      const value = query.get(key)
-      if (value === undefined)
-        continue
-      else if (value === null)
-        Config[key] = true
-      else if (value === 'false')
-        Config[key] = true
-      else
-        Config[key] = value
-    }
+function initEmbed() {
+  const query = new URLSearchParams(location.search);
+  for (const key of Object.keys(Config)) {
+    const value = query.get(key)
+    if (value == null)
+      continue
+    if (value === '')
+      Config[key] = true
+    else if (value === 'false')
+      Config[key] = false
+    else
+      Config[key] = value
   }
 
-  updateDark();
+
+  if (query.get('show-configs') != null)
+    document.body.classList.toggle('show-configs', true)
+
+  if (query.get('show-compile') != null) {
+    document.body.classList.toggle('show-compile', true)
+    handv = window.innerWidth * 0.5;
+  }
+  else {
+    handv = window.innerWidth;
+    window.addEventListener("resize", () => {
+      handv = window.innerWidth;
+    });
+  }
+  handex = 0;
+
+  currentFile.name = decodeURIComponent(query.get('title') || '')
+  currentFile.code = decodeURIComponent(query.get('code') || '')
+  loadFile()
+
+  if (query.get('autorun') != null)
+    crun()
 }
 
 
@@ -251,8 +270,8 @@ function setView() {
   dhv.style.width = hw + "px";
   dhv.style.height = handh + "px";
 
-  dhh.style.left = handex + 1 + "px";
-  dhh.style.top = handh - hw / 2 + "px";
+  dhh.style.left = handex + "px";
+  dhh.style.top = handh - hw / 2 - 1 + "px";
   dhh.style.width = W - handex + "px";
   dhh.style.height = hw + "px";
 }
@@ -302,6 +321,8 @@ function initExplorer() {
 }
 
 function updateExplorerList() {
+  if (EMBED)
+    return
   exlistExamples.innerHTML = "";
   for (let file of Object.values(examples)) {
     exlistExamples.appendChild(createExplorerEntry(file));
@@ -367,24 +388,25 @@ function openFile(name) {
   loadFile(name);
 }
 
-function loadFile(name) {
+function loadFile(name = currentFile.name) {
   if (currentFile.name !== name) {
     currentFile = Files[name] || examples[name];
     if (!currentFile) {
       currentFile = { name, code: "" };
       Files[name] = currentFile;
     }
-
-    savingLock = true;
-    editorCM.setValue(currentFile.code || "");
-    savingLock = false;
-
-    crun();
   }
+  savingLock = true;
+  editorCM.setValue(currentFile.code || "");
+  savingLock = false;
   document.title = (currentFile.alias || currentFile.name) + TITLE;
   fileNameSpan.innerText = currentFile.alias || currentFile.name;
   updateExplorerList();
   deleteBtn.classList.toggle("hidden", !!currentFile.readonly);
+
+  if (currentFile.name !== name) {
+    crun();
+  }
 }
 
 function parseUrlQuery() {
@@ -735,6 +757,7 @@ function importPackageIntoCurrent({ name }) {
 
 init();
 
+
 editorCM = CodeMirror(document.getElementById("in"), {
   value: "",
   mode: "wenyan",
@@ -818,7 +841,7 @@ downloadRenderBtn.onclick = downloadRenders;
 deleteBtn.onclick = deleteCurrentFile;
 fileNameSpan.onclick = renameCurrentFile;
 
-Config.on('dark', () => updateDark())
+Config.on('dark', () => updateDark(), true)
 Config.on('hideImported', () => crun())
 Config.on('outputHanzi', () => crun())
 Config.on('romanizeIdentifiers', () => crun())
@@ -828,11 +851,16 @@ Config.on('enablePackages', () => {
   crun();
 })
 
-document.body.onresize = setView;
+window.addEventListener("resize", setView);
 window.addEventListener("popstate", parseUrlQuery);
-loadState();
+
 initConfigComponents();
 loadPackages();
+
+if (EMBED)
+  initEmbed();
+else {
+  parseUrlQuery();
+  initExplorer();
+}
 setView();
-parseUrlQuery();
-initExplorer();

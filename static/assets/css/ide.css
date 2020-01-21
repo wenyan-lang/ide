@@ -2,6 +2,18 @@ body {
   margin: 0px;
   overflow: hidden;
   font-family: sans-serif;
+  background: white;
+}
+
+.embed #hand-ex,
+.embed:not(.show-configs) .checkbox,
+.embed:not(.show-configs) .dropdown,
+.embed:not(.show-compile) #hand-v,
+.embed:not(.show-compile) #js-outer,
+.embed:not(.show-compile) #compile,
+.embed .hide-embed
+{
+  display: none !important;
 }
 
 #in-outer,
