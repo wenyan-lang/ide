@@ -4,7 +4,7 @@ https://wenyan-ide.netlify.com/
 
 ![](https://github.com/wenyan-lang/wenyan/raw/master/screenshots/screenshot02.png)
 
-## Embed
+## Embed IDE
 
 You can embed the Online IDE into your own website by using [iframe](https://www.w3schools.com/tags/tag_iframe.asp).
 
@@ -66,9 +66,8 @@ editor.contentWindow.postMessage({ action: 'clear' }, '*')
 #### Receiving
 
 ```js
-// Change title
 window.addEventListener('message', (e) => {
-  // filtering
+  // filtering, message from the ide always contains `source` filed.
   if (e.data.source === 'wenyan-ide') {
     if (e.data.action === 'change') {
       console.log('Code changed to ' + e.data.value)
