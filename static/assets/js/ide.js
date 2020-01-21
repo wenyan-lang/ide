@@ -1,21 +1,21 @@
 const LOCAL_STORAGE_KEY = "wenyang-ide";
+
 const TITLE = " - 文言 Wenyan Online IDE";
-const DEFAULT_STATE = () => ({
-  config: {
-    lang: "js",
-    romanizeIdentifiers: "none",
-    dark: false,
-    enablePackages: true,
-    outputHanzi: true,
-    hideImported: true,
-    strict: false
-  },
-  files: {},
-  wyg: {
-    packages: [],
-    last_updated: -Infinity
-  }
-});
+const Config = Storage('wenyan-ide-config', {
+  lang: "js",
+  romanizeIdentifiers: "none",
+  dark: false,
+  enablePackages: true,
+  outputHanzi: true,
+  hideImported: true,
+  strict: false
+})
+const WygStore = Storage('wenyan-ide-wyg', {
+  packages: [],
+  last_updated: -Infinity
+})
+const Files = Storage('wenyan-ide-files', {})
+
 const PACKAGES_LIFETIME = 1000 * 60 * 60; // 60 min
 const EXPLORER_WIDTH_MIN = 0;
 const EXPLORER_WIDTH_MAX = 400;
@@ -25,6 +25,7 @@ const OUTPUT_HEIGHT_MIN = 36;
 const AUTOCOMPLETE_TRIGGER_REGEX = /[\d\w\.,'"\/]+$/;
 const CONTROL_KEYCODES = [13, 37, 38, 39, 40, 9, 27]; // Enter, Arrow Keys, etc
 
+const EMBED = window.location.pathname === "/embed";
 const djs = document.getElementById("js-outer");
 const din = document.getElementById("in-outer");
 const dou = document.getElementById("out-outer");
@@ -47,20 +48,17 @@ const fileNameSpan = document.getElementById("current-file-name");
 const downloadRenderBtn = document.getElementById("download-render");
 const packageInfoPanel = document.getElementById("package-info-panel");
 
-const configDark = document.getElementById("config-dark");
-const configHideImported = document.getElementById("cofig-hide-imported");
-const configEnablePackages = document.getElementById("config-enable-packages");
-const configOutputHanzi = document.getElementById("config-output-hanzi");
-const configRomanize = document.getElementById("config-romanize");
-const configLang = document.getElementById("config-lang");
+let handv = window.innerWidth * 0.6;
+let handh = window.innerHeight * 0.7;
+let handex = window.innerWidth * 0.15;
 
-var handv = window.innerWidth * 0.6;
-var handh = window.innerHeight * 0.7;
-var handex = window.innerWidth * 0.15;
+if (EMBED) {
+  handex = 0;
+  handv = window.innerWidth * 0.5;
+}
 
 var currentFile = {};
 var renderedSVGs = [];
-var state;
 var examples = {};
 var cache = {};
 var snippets = [];
@@ -111,8 +109,8 @@ function init() {
       trigger:
         x.length > 1
           ? Wenyan.hanzi2pinyin(x)
-              .replace(/([A-z])[A-z]+?([1-9])/g, "$1")
-              .toLowerCase()
+            .replace(/([A-z])[A-z]+?([1-9])/g, "$1")
+            .toLowerCase()
           : Wenyan.hanzi2pinyin(x).toLowerCase()
     }))
   ];
@@ -128,13 +126,11 @@ function initConfigComponents() {
     "button[data-config]:not(.dropdown)"
   );
   for (const cb of checkboxes) {
-    cb.classList.toggle("checked", state.config[cb.dataset.config]);
+    cb.classList.toggle("checked", Config[cb.dataset.config]);
 
     cb.addEventListener("click", () => {
       cb.classList.toggle("checked");
-      state.config[cb.dataset.config] = cb.classList.contains("checked");
-      saveState();
-      if (cb.onchange) cb.onchange();
+      Config[cb.dataset.config] = cb.classList.contains("checked");
     });
   }
 
@@ -143,34 +139,36 @@ function initConfigComponents() {
     const value = dd.querySelector(".value");
     const select = dd.querySelector("select");
 
-    select.value = state.config[dd.dataset.config];
-    value.innerText = select.selectedOptions[0].innerText;
+    select.value = Config[dd.dataset.config];
+    if (select.selectedOptions[0])
+      value.innerText = select.selectedOptions[0].innerText;
 
     select.addEventListener("change", () => {
       value.innerText = select.selectedOptions[0].innerText;
-      state.config[dd.dataset.config] = select.value;
-      saveState();
-      if (dd.onchange) dd.onchange();
+      Config[dd.dataset.config] = select.value;
     });
   }
 }
 
 function loadState() {
-  const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-  const defaultState = DEFAULT_STATE();
-
-  if (raw) {
-    const parsed = JSON.parse(raw);
-    state = Object.assign({}, defaultState, parsed);
-    state.config = Object.assign({}, defaultState.config, parsed.config);
-  } else state = defaultState;
+  if (EMBED) {
+    const query = new URLSearchParams(location.search);
+    for (const key of Object.keys(Config)) {
+      const value = query.get(key)
+      if (value === undefined)
+        continue
+      else if (value === null)
+        Config[key] = true
+      else if (value === 'false')
+        Config[key] = true
+      else
+        Config[key] = value
+    }
+  }
 
   updateDark();
 }
 
-function saveState() {
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
-}
 
 function registerHandlerEvents(handler, set) {
   function start(e) {
@@ -296,7 +294,7 @@ function initExplorer() {
   var i;
 
   for (i = 0; i < toggler.length; i++) {
-    toggler[i].addEventListener("click", function() {
+    toggler[i].addEventListener("click", function () {
       this.parentElement.querySelector(".nested").classList.toggle("active");
       this.classList.toggle("active");
     });
@@ -310,14 +308,14 @@ function updateExplorerList() {
   }
 
   exlistUser.innerHTML = "";
-  for (let file of Object.values(state.files)) {
+  for (let file of Object.values(Files)) {
     exlistUser.appendChild(createExplorerEntry(file));
   }
 
-  explorerPackages.classList.toggle("hidden", !state.config.enablePackages);
-  if (state.config.enablePackages) {
+  explorerPackages.classList.toggle("hidden", !Config.enablePackages);
+  if (Config.enablePackages) {
     exlistPackages.innerHTML = "";
-    for (let pkg of state.wyg.packages) {
+    for (let pkg of WygStore.packages) {
       exlistPackages.appendChild(createExplorerPackageEntry(pkg));
     }
   }
@@ -371,11 +369,10 @@ function openFile(name) {
 
 function loadFile(name) {
   if (currentFile.name !== name) {
-    currentFile = state.files[name] || examples[name];
+    currentFile = Files[name] || examples[name];
     if (!currentFile) {
       currentFile = { name, code: "" };
-      state.files[name] = currentFile;
-      saveState();
+      Files[name] = currentFile;
     }
 
     savingLock = true;
@@ -406,12 +403,11 @@ function updateExperimentFeatures(value) {
 function deleteCurrentFile() {
   const yes = confirm(
     `Are you sure to delete file ${currentFile.alias ||
-      currentFile.alias}?\n\nThis operation can NOT be undone.`
+    currentFile.alias}?\n\nThis operation can NOT be undone.`
   );
   if (yes) {
-    delete state.files[currentFile.name];
-    saveState();
-    openFile(Object.keys(state.files)[0] || "mandelbrot");
+    delete Files[currentFile.name];
+    openFile(Object.keys(Files)[0] || "mandelbrot");
   }
 }
 
@@ -450,11 +446,10 @@ function renameCurrentFile() {
   if (currentFile.readonly) return;
   const name = prompt("Rename", currentFile.alias || currentFile.name);
   if (name) {
-    delete state.files[currentFile.name];
+    delete Files[currentFile.name];
     delete currentFile.alias;
     currentFile.name = name;
-    state.files[name] = currentFile;
-    saveState();
+    Files[name] = currentFile;
     openFile(name);
   }
 }
@@ -493,12 +488,12 @@ function getImportContext() {
     ...Examples.examples
   };
 
-  for (const key of Object.keys(state.files)) {
-    context[key] = state.files[key].code;
+  for (const key of Object.keys(Files)) {
+    context[key] = Files[key].code;
   }
 
-  if (state.config.enablePackages) {
-    for (const pkg of state.wyg.packages) {
+  if (Config.enablePackages) {
+    for (const pkg of WygStore.packages) {
       context[pkg.name] = {
         entry: pkg.entry
       };
@@ -511,13 +506,12 @@ function getImportContext() {
 function loadPackages() {
   updateExplorerList();
   if (
-    state.config.enablePackages &&
-    Date.now() - state.wyg.last_updated > PACKAGES_LIFETIME
+    Config.enablePackages &&
+    Date.now() - WygStore.last_updated > PACKAGES_LIFETIME
   ) {
     Wyg.list().then(packages => {
-      state.wyg.packages = packages;
-      state.wyg.last_updated = +Date.now();
-      saveState();
+      WygStore.packages = packages;
+      WygStore.last_updated = +Date.now();
       updateExplorerList();
       crun();
     });
@@ -534,7 +528,7 @@ function resetOutput() {
 }
 
 function updateCompiled(code) {
-  var showcode = state.config.hideImported ? hideImportedModules(code) : code;
+  var showcode = Config.hideImported ? hideImportedModules(code) : code;
 
   jsCM.setOption(
     "mode",
@@ -542,10 +536,10 @@ function updateCompiled(code) {
       js: "javascript",
       py: "python",
       rb: "ruby"
-    }[state.config.lang]
+    }[Config.lang]
   );
 
-  if (state.config.lang === "js") {
+  if (Config.lang === "js") {
     jsCM.setValue(js_beautify(showcode));
   } else {
     jsCM.setValue(code);
@@ -558,8 +552,8 @@ function compile() {
   try {
     let errorLog = "";
     var code = Wenyan.compile(editorCM.getValue(), {
-      lang: state.config.lang,
-      romanizeIdentifiers: state.config.romanizeIdentifiers,
+      lang: Config.lang,
+      romanizeIdentifiers: Config.romanizeIdentifiers,
       resetVarCnt: true,
       errorCallback: (...args) => (errorLog += args.join(" ") + "\n"),
       importContext: getImportContext(),
@@ -567,13 +561,13 @@ function compile() {
       logCallback: x => {
         log += x + "\n";
       },
-      strict: state.config.strict
+      strict: Config.strict
     });
     if (errorLog) {
       send({ text: errorLog });
       return;
     }
-    if (state.config.strict) {
+    if (Config.strict) {
       var sig = log
         .split("=== [PASS 2.5] TYPECHECK ===\n")[1]
         .split("=== [PASS 3] COMPILER ===")[0];
@@ -627,9 +621,9 @@ function send(data) {
       /*HACK*/ Wenyan.evalCompiled(code, {
         /*HACK*/ ...options,
         /*HACK*/ output: (...args) =>
-          (outdiv.innerText += args.join(" ") + "\n")
-        /*HACK*/
-      });
+        (outdiv.innerText += args.join(" ") + "\n")
+      /*HACK*/
+    });
       /*HACK*/
     } catch (e) {
       /*HACK*/ outdiv.innerText += e.toString();
@@ -643,8 +637,8 @@ function executeCode(code) {
   send({
     code,
     options: {
-      lang: state.config.lang,
-      outputHanzi: state.config.outputHanzi
+      lang: Config.lang,
+      outputHanzi: Config.outputHanzi
     }
   });
 }
@@ -659,14 +653,14 @@ function crun() {
   try {
     let errorOutput = "";
     var code = Wenyan.compile(editorCM.getValue(), {
-      lang: state.config.lang,
-      romanizeIdentifiers: state.config.romanizeIdentifiers,
+      lang: Config.lang,
+      romanizeIdentifiers: Config.romanizeIdentifiers,
       resetVarCnt: true,
       errorCallback: (...args) =>
         (errorOutput.innerText += args.join(" ") + "\n"),
       importContext: getImportContext(),
       importCache: cache,
-      strict: state.config.strict
+      strict: Config.strict
     });
 
     updateCompiled(code);
@@ -680,17 +674,22 @@ function crun() {
 }
 
 function updateDark() {
-  if (state.config.dark) {
+  if (Config.dark) {
     document.body.style.filter = "invert(0.88)";
   } else {
     document.body.style.filter = "invert(0)";
   }
   document
     .getElementById("dark-icon-sunny")
-    .classList.toggle("hidden", !state.config.dark);
+    .classList.toggle("hidden", !Config.dark);
   document
     .getElementById("dark-icon-night")
-    .classList.toggle("hidden", state.config.dark);
+    .classList.toggle("hidden", Config.dark);
+}
+
+function saveFile() {
+  if (!currentFile.readonly)
+    Files[currentFile.name] = currentFile
 }
 
 function render() {
@@ -765,11 +764,11 @@ editorCM.on("change", e => {
 
   if (!currentFile.readonly) {
     currentFile.code = editorCM.getValue();
-    saveState();
+    saveFile();
   } else {
     // make a copy for examples
     let num = 1;
-    while (state.files[`${currentFile.name}_${num}`]) {
+    while (Files[`${currentFile.name}_${num}`]) {
       num += 1;
     }
     const name = `${currentFile.name}_${num}`;
@@ -780,9 +779,8 @@ editorCM.on("change", e => {
         : "",
       code: editorCM.getValue()
     };
-    state.files[name] = newFile;
+    Files[name] = newFile;
     currentFile = newFile;
-    saveState();
     openFile(name);
   }
 });
@@ -820,15 +818,15 @@ downloadRenderBtn.onclick = downloadRenders;
 deleteBtn.onclick = deleteCurrentFile;
 fileNameSpan.onclick = renameCurrentFile;
 
-configDark.onchange = updateDark;
-configHideImported.onchange = crun;
-configOutputHanzi.onchange = crun;
-configRomanize.onchange = crun;
-configLang.onchange = crun;
-configEnablePackages.onchange = () => {
+Config.on('dark', () => updateDark())
+Config.on('hideImported', () => crun())
+Config.on('outputHanzi', () => crun())
+Config.on('romanizeIdentifiers', () => crun())
+Config.on('lang', () => crun())
+Config.on('enablePackages', () => {
   loadPackages();
   crun();
-};
+})
 
 document.body.onresize = setView;
 window.addEventListener("popstate", parseUrlQuery);
