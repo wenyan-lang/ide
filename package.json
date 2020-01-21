@@ -1,0 +1,17 @@
+{
+  "name": "wenyan-ide",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Online IDE for wenyan-lang",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wenyan",
+    "wenyan-lang",
+    "ide"
+  ],
+  "author": "",
+  "license": "MIT"
+}
