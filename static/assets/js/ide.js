@@ -1,8 +1,11 @@
+function camelToKebab(str) {
+  return str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
+}
+
 const EMBED = window.location.pathname === "/embed";
 
 if (EMBED) {
   console.debug('Working in Embedded mode')
-  document.body.classList.toggle('embed', true)
 }
 
 const TITLE = " - 文言 Wenyan Online IDE";
@@ -21,6 +24,14 @@ const WygStore = Storage('wenyan-ide-wyg', {
 })
 const Files = Storage('wenyan-ide-files', {
 }, EMBED ? null : localStorage)
+const EmbedConfig = Storage('', {
+  showConfigs: false,
+  showBars: false,
+  showCompile: false,
+  hideOutput: false,
+  title: '',
+  code: '',
+}, null)
 
 const PACKAGES_LIFETIME = 1000 * 60 * 60; // 60 min
 const EXPLORER_WIDTH_MIN = 0;
@@ -30,6 +41,9 @@ const EDITOR_HEIGHT_MIN = 36;
 const OUTPUT_HEIGHT_MIN = 36;
 const AUTOCOMPLETE_TRIGGER_REGEX = /[\d\w\.,'"\/]+$/;
 const CONTROL_KEYCODES = [13, 37, 38, 39, 40, 9, 27]; // Enter, Arrow Keys, etc
+
+const framejs = document.getElementById("js");
+const framein = document.getElementById("in");
 
 const djs = document.getElementById("js-outer");
 const din = document.getElementById("in-outer");
@@ -150,39 +164,72 @@ function initConfigComponents() {
   }
 }
 
+function getBarHeight() {
+  if (EMBED && !EmbedConfig.showBars)
+    return 0
+  return 36
+}
+
 function initEmbed() {
+  document.body.classList.toggle('embed', true)
+
   const query = new URLSearchParams(location.search);
-  for (const key of Object.keys(Config)) {
-    const value = query.get(key)
-    if (value == null)
-      continue
-    if (value === '')
-      Config[key] = true
-    else if (value === 'false')
-      Config[key] = false
-    else
-      Config[key] = value
+  function updateConfigFromQuery(config) {
+    for (const key of Object.keys(config)) {
+      const value = query.get(camelToKebab(key))
+      if (value == null)
+        config[key] = config[key]
+      else if (value === '')
+        config[key] = true
+      else if (value === 'false')
+        config[key] = false
+      else
+        config[key] = value
+    }
   }
 
+  EmbedConfig.on('showConfigs', v => {
+    document.body.classList.toggle('show-configs', v)
+  })
 
-  if (query.get('show-configs') != null)
-    document.body.classList.toggle('show-configs', true)
+  EmbedConfig.on('showCompile', v => {
+    document.body.classList.toggle('show-compile', v)
+    handv = v ? window.innerWidth * 0.5 : window.innerWidth;
+    setView()
+  })
 
-  if (query.get('show-compile') != null) {
-    document.body.classList.toggle('show-compile', true)
-    handv = window.innerWidth * 0.5;
-  }
-  else {
-    handv = window.innerWidth;
-    window.addEventListener("resize", () => {
+  EmbedConfig.on('showBars', v => {
+    document.body.classList.toggle('show-bars', v)
+    setView()
+  })
+
+  EmbedConfig.on('hideOutput', v => {
+    document.body.classList.toggle('show-output', !v)
+    handh = (!v) ? window.innerHeight * 0.7 : window.innerHeight;
+    setView()
+  })
+
+  EmbedConfig.on('title', v => {
+    currentFile.name = decodeURIComponent(v || '')
+    loadFile()
+  })
+
+  EmbedConfig.on('code', v => {
+    currentFile.code = decodeURIComponent(v || '')
+    loadFile()
+  })
+
+  updateConfigFromQuery(Config)
+  updateConfigFromQuery(EmbedConfig)
+
+  window.addEventListener("resize", () => {
+    if (!EmbedConfig.showCompile)
       handv = window.innerWidth;
-    });
-  }
-  handex = 0;
+    if (EmbedConfig.hideOutput)
+      handh = window.innerHeight;
+  })
 
-  currentFile.name = decodeURIComponent(query.get('title') || '')
-  currentFile.code = decodeURIComponent(query.get('code') || '')
-  loadFile()
+  handex = 0;
 
   if (query.get('autorun') != null)
     crun()
@@ -190,7 +237,12 @@ function initEmbed() {
   window.addEventListener('message', (e) => {
     const { action, field, value } = e.data || {}
     if (action === 'config') {
-      Config[field] = value
+      if (field in Config)
+        Config[field] = value
+      else if (field in EmbedConfig)
+        EmbedConfig[field] = value
+      else
+        throw new Error(`Invalid field "${field}" to set config to.`)
     } else if (action === 'title') {
       currentFile.name = value
       loadFile()
@@ -249,10 +301,13 @@ function registerHandlerEvents(handler, set) {
 }
 
 function setView() {
-  var W = window.innerWidth;
-  var H = window.innerHeight;
-  var hw = 9;
-  var barHeight = 36;
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  const hw = 9;
+  const barHeight = getBarHeight();
+
+  framejs.style.height = `calc(100% - ${barHeight}px)`;
+  framein.style.height = `calc(100% - ${barHeight}px)`;
 
   dex.style.left = "0px";
   dex.style.top = "0px";
@@ -628,6 +683,11 @@ function compile() {
   }
 }
 
+function sendToParent(data) {
+  if (window.parent !== window)
+    window.parent.postMessage(data, '*')
+}
+
 function send(data) {
   var is_safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   if (!is_safari) {
@@ -782,7 +842,6 @@ function importPackageIntoCurrent({ name }) {
 
 init();
 
-
 editorCM = CodeMirror(document.getElementById("in"), {
   value: "",
   mode: "wenyan",
@@ -811,11 +870,11 @@ editorCM.on("change", e => {
   if (savingLock) return;
 
   if (EMBED) {
-    window.parent.postMessage({
+    sendToParent({
       source: 'wenyan-ide',
       action: 'change',
       value: editorCM.getValue()
-    }, '*')
+    })
   }
 
   if (!currentFile.readonly) {
@@ -874,7 +933,14 @@ downloadRenderBtn.onclick = downloadRenders;
 deleteBtn.onclick = deleteCurrentFile;
 fileNameSpan.onclick = renameCurrentFile;
 
-Config.on('dark', () => updateDark(), true)
+window.addEventListener("resize", setView);
+if (!EMBED)
+  window.addEventListener("popstate", parseUrlQuery);
+
+initConfigComponents();
+loadPackages();
+
+Config.on('dark', updateDark, true)
 Config.on('hideImported', () => crun())
 Config.on('outputHanzi', () => crun())
 Config.on('romanizeIdentifiers', () => crun())
@@ -884,12 +950,6 @@ Config.on('enablePackages', () => {
   crun();
 })
 
-window.addEventListener("resize", setView);
-window.addEventListener("popstate", parseUrlQuery);
-
-initConfigComponents();
-loadPackages();
-
 if (EMBED)
   initEmbed();
 else {
@@ -898,4 +958,4 @@ else {
 }
 setView();
 
-document.body.style = ''
+document.body.classList.toggle('invisible')

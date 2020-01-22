@@ -11,6 +11,10 @@ body {
 .embed:not(.show-compile) #hand-v,
 .embed:not(.show-compile) #js-outer,
 .embed:not(.show-compile) #compile,
+.embed:not(.show-output) #hand-h,
+.embed:not(.show-output) #out-outer,
+.embed:not(.show-output) #out,
+.embed:not(.show-bars) .bar,
 .embed .hide-embed
 {
   display: none !important;

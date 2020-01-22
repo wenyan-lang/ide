@@ -25,9 +25,11 @@ You can config the IDE by using query strings.
 | `autorun` | Execute the script on loaded | `false` |
 | `show-compile` | Show the `Compiled` panel | `false` |
 | `show-configs` | Show the configs buttons | `false` |
+| `show-bars` | Show action bars in editor | `false` |
+| `hide-output` | Hide output panel | `false` |
 | `readonly` | Make file readonly **WIP** | `false` |
 | `dark` | Use dark theme | `false` |
-| `outputHanzi` | Output numbers as hanzi | `false` |
+| `output-hanzi` | Output numbers as hanzi | `false` |
 
 Here are some example usages:
 
