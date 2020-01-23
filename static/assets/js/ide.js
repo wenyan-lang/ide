@@ -848,6 +848,7 @@ editorCM = CodeMirror(document.getElementById("in"), {
   lineNumbers: true,
   theme: "wenyan-light",
   styleActiveLine: true,
+  showInvisibles: true,
   extraKeys: {
     "Shift-Enter": crun,
     "Alt-Enter": compile
