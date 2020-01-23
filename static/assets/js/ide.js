@@ -16,7 +16,10 @@ const Config = Storage('wenyan-ide-config', {
   enablePackages: true,
   outputHanzi: true,
   hideImported: true,
-  strict: false
+  strict: false,
+  showInvisibles: false,
+  tabSize: 4,
+  preferSpace: false,
 }, EMBED ? null : localStorage)
 const WygStore = Storage('wenyan-ide-wyg', {
   packages: [],
@@ -838,6 +841,37 @@ function importPackageIntoCurrent({ name }) {
   closePackageInfo();
 }
 
+function format() {
+  let code = editorCM.getValue()
+  if (!Config.preferSpace) {
+    const regex = new RegExp(`^([\s\t]*)[ ]{${Config.tabSize}}([\s\t]*)`, 'gm')
+    let prev_code = code
+    while (true) {
+      prev_code = code
+      code = code.replace(regex, '$1\t$2')
+      if (prev_code === code)
+        break
+    }
+    // remove single spaces
+    code = code.replace(/^(\t*)[ ]+/gm, '$1')
+  }
+  else {
+    const spaces = new Array(Config.tabSize).fill(' ').join('')
+    const regex = new RegExp(`^([\s\t]*)\t`, 'gm')
+    let prev_code = code
+    while (true) {
+      prev_code = code
+      code = code.replace(regex, `$1${spaces}`)
+      if (prev_code === code)
+        break
+    }
+  }
+
+  // remove tailing spaces
+  code = code.replace(/[ \t]*$/gm, '')
+  editorCM.setValue(code)
+}
+
 /* =========== Scripts =========== */
 
 init();
@@ -848,7 +882,7 @@ editorCM = CodeMirror(document.getElementById("in"), {
   lineNumbers: true,
   theme: "wenyan-light",
   styleActiveLine: true,
-  showInvisibles: true,
+  showInvisibles: Config.showInvisibles,
   extraKeys: {
     "Shift-Enter": crun,
     "Alt-Enter": compile
@@ -949,6 +983,9 @@ Config.on('lang', () => crun())
 Config.on('enablePackages', () => {
   loadPackages();
   crun();
+})
+Config.on('showInvisibles', (v) => {
+  editorCM.setOption('showInvisibles', v)
 })
 
 if (EMBED)
