@@ -85,6 +85,7 @@ body {
   background: white;
   overflow: auto;
   font-family: monospace;
+  z-index: -2;
 }
 
 #out-render {
@@ -105,7 +106,7 @@ body {
 #hand-ex {
   position: absolute;
   cursor: ew-resize;
-  z-index: 10;
+  z-index: 100;
 }
 
 .editor-hint {
@@ -126,7 +127,7 @@ body {
 #hand-h {
   position: absolute;
   cursor: ns-resize;
-  z-index: 10;
+  z-index: 100;
 }
 
 #hand-v-inner,
