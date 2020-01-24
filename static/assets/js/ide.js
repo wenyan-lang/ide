@@ -1,45 +1,11 @@
-function camelToKebab(str) {
-  return str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
-}
-
 window.Examples = window.Examples || { examples: [] }
 window.Wenyan = window.Wenyan || { compile: () => null, KEYWORDS: [] }
 window.Wyg = window.Wyg || { list: async () => [] }
 
+// ========== Constants ==========
+
 const EMBED = window.location.pathname === "/embed";
-
-if (EMBED) {
-  console.debug('Working in Embedded mode')
-}
-
 const TITLE = " - 文言 Wenyan Online IDE";
-const Config = Storage('wenyan-ide-config', {
-  lang: "js",
-  romanizeIdentifiers: "none",
-  dark: false,
-  enablePackages: true,
-  outputHanzi: true,
-  hideImported: true,
-  strict: false,
-  showInvisibles: false,
-  tabSize: 4,
-  preferSpace: false,
-}, EMBED ? null : localStorage)
-const WygStore = Storage('wenyan-ide-wyg', {
-  packages: [],
-  last_updated: -Infinity
-})
-const Files = Storage('wenyan-ide-files', {
-}, EMBED ? null : localStorage)
-const EmbedConfig = Storage('', {
-  showConfigs: false,
-  showBars: false,
-  showCompile: false,
-  hideOutput: false,
-  title: '',
-  code: '',
-}, null)
-
 const PACKAGES_LIFETIME = 1000 * 60 * 60; // 60 min
 const EXPLORER_WIDTH_MIN = 0;
 const EXPLORER_WIDTH_MAX = 400;
@@ -49,9 +15,13 @@ const OUTPUT_HEIGHT_MIN = 36;
 const AUTOCOMPLETE_TRIGGER_REGEX = /[\d\w\.,'"\/]+$/;
 const CONTROL_KEYCODES = [13, 37, 38, 39, 40, 9, 27]; // Enter, Arrow Keys, etc
 
-var dhv = document.getElementById("hand-v");
-var dhh = document.getElementById("hand-h");
-var dhex = document.getElementById("hand-ex");
+if (EMBED) console.debug('Working in Embedded mode')
+
+// ========== Variables ==========
+
+const dhv = document.getElementById("hand-v");
+const dhh = document.getElementById("hand-h");
+const dhex = document.getElementById("hand-ex");
 
 const exlist = document.getElementById("explorer-list");
 const exlistUser = document.getElementById("explorer-list-user");
@@ -70,16 +40,52 @@ let handv = window.innerWidth * 0.6;
 let handh = window.innerHeight * 0.7;
 let handex = window.innerWidth * 0.15;
 
-var currentFile = {};
-var renderedSVGs = [];
-var examples = {};
-var cache = {};
-var snippets = [];
+let currentFile = {};
+let renderedSVGs = [];
+let examples = {};
+let cache = {};
+let snippets = [];
+let savingLock = false; // to ignore changes made from switching files
+let editorCM;
+let jsCM;
 
-var savingLock = false; // to ignore changes made from switching files
+// ========== Configs ==========
 
-var editorCM;
-var jsCM;
+const Config = Storage('wenyan-ide-config', {
+  lang: "js",
+  romanizeIdentifiers: "none",
+  dark: false,
+  enablePackages: true,
+  outputHanzi: true,
+  hideImported: true,
+  strict: false,
+  showInvisibles: false,
+  tabSize: 4,
+  preferSpace: false,
+}, EMBED ? null : localStorage)
+
+const WygStore = Storage('wenyan-ide-wyg', {
+  packages: [],
+  last_updated: -Infinity
+})
+
+const Files = Storage('wenyan-ide-files', {
+}, EMBED ? null : localStorage)
+
+const EmbedConfig = Storage('', {
+  showConfigs: false,
+  showBars: false,
+  showCompile: false,
+  hideOutput: false,
+  title: '',
+  code: '',
+}, null)
+
+// ========== Functions ==========
+
+function camelToKebab(str) {
+  return str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
+}
 
 function init() {
   for (const key of Object.keys(Examples.examples)) {
@@ -942,6 +948,7 @@ Config.on('enablePackages', () => {
 })
 Config.on('showInvisibles', (v) => {
   editorCM.setOption('showInvisibles', v)
+  document.body.classList.toggle('show-invisibles', v)
 })
 
 if (EMBED)
