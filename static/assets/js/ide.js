@@ -2,6 +2,10 @@ function camelToKebab(str) {
   return str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 }
 
+window.Examples = window.Examples || { examples: [] }
+window.Wenyan = window.Wenyan || { compile: () => null, KEYWORDS: [] }
+window.Wyg = window.Wyg || { list: async () => [] }
+
 const EMBED = window.location.pathname === "/embed";
 
 if (EMBED) {
@@ -44,14 +48,6 @@ const EDITOR_HEIGHT_MIN = 36;
 const OUTPUT_HEIGHT_MIN = 36;
 const AUTOCOMPLETE_TRIGGER_REGEX = /[\d\w\.,'"\/]+$/;
 const CONTROL_KEYCODES = [13, 37, 38, 39, 40, 9, 27]; // Enter, Arrow Keys, etc
-
-const framejs = document.getElementById("js");
-const framein = document.getElementById("in");
-
-const djs = document.getElementById("js-outer");
-const din = document.getElementById("in-outer");
-const dou = document.getElementById("out-outer");
-const dex = document.getElementById("ex-outer");
 
 var dhv = document.getElementById("hand-v");
 var dhh = document.getElementById("hand-h");
@@ -306,51 +302,11 @@ function registerHandlerEvents(handler, set) {
 function setView() {
   const W = window.innerWidth;
   const H = window.innerHeight;
-  const hw = 9;
-  const barHeight = getBarHeight();
 
-  framejs.style.height = `calc(100% - ${barHeight}px)`;
-  framein.style.height = `calc(100% - ${barHeight}px)`;
-
-  dex.style.left = "0px";
-  dex.style.top = "0px";
-  dex.style.width = handex + "px";
-  dex.style.height = H + "px";
-
-  din.style.left = handex + "px";
-  din.style.top = "0px";
-  din.style.width = handv - handex + "px";
-  din.style.height = handh + "px";
-
-  djs.style.left = handv + "px";
-  djs.style.top = "0px";
-  djs.style.width = W - handv + "px";
-  djs.style.height = handh + "px";
-
-  dou.style.left = handex + "px";
-  dou.style.top = handh + "px";
-  dou.style.width = W - handex + "px";
-  dou.style.height = H - handh + "px";
-
-  outIframe.style.left = handex + "px";
-  outIframe.style.top = handh + barHeight + "px";
-  outIframe.style.width = W - handex + "px";
-  outIframe.style.height = H - handh - barHeight + "px";
-
-  dhex.style.left = handex - hw / 2 + "px";
-  dhex.style.top = "0px";
-  dhex.style.width = hw + "px";
-  dhex.style.height = H + "px";
-
-  dhv.style.left = handv - hw / 2 + "px";
-  dhv.style.top = "0px";
-  dhv.style.width = hw + "px";
-  dhv.style.height = handh + "px";
-
-  dhh.style.left = handex + "px";
-  dhh.style.top = handh - hw / 2 - 1 + "px";
-  dhh.style.width = W - handex + "px";
-  dhh.style.height = hw + "px";
+  document.body.style.setProperty('--handh', `${handh / H * 100}vh`);
+  document.body.style.setProperty('--handex', `${handex / W * 100}vw`);
+  document.body.style.setProperty('--handv', `${handv / W * 100}vw`);
+  document.body.style.setProperty('--bar-height', `${getBarHeight()}px`);
 }
 
 function hideImportedModules(source) {

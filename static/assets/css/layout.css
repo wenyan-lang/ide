@@ -1,0 +1,68 @@
+body {
+  --handh: 70vh;
+  --handv: 70vw;
+  --handex: 20vw;
+  --bar-height: 10px;
+  --handle-width: 9px;
+  --handle-width-half: calc(var(--handle-width) / 2);
+}
+
+#in, #js {
+  height: calc(100% - var(--bar-height));
+}
+
+#ex-outer {
+  width: var(--handex);
+  height: 100vh;
+  top: 0;
+  left: 0;
+}
+
+#in-outer {
+  width: calc(var(--handv) - var(--handex));
+  height: var(--handh);
+  top: 0;
+  left: var(--handex);
+}
+
+#js-outer {
+  width: calc(100vw - var(--handv));
+  height: var(--handh);
+  top: 0;
+  left: var(--handv);
+}
+
+#out-outer {
+  width: calc(100vw - var(--handex));
+  height: calc(100vh - var(--handh));
+  top: var(--handh);
+  left: var(--handex);
+}
+
+#out-iframe {
+  left: var(--handex);
+  top: calc(var(--handh) + var(--bar-height));
+  width: calc(100vw - var(--handex));
+  height: calc(calc(100vh - var(--handh)) - var(--bar-height));
+}
+
+#hand-ex {
+  left: calc(var(--handex) - var(--handle-width-half));
+  top: 0;
+  width: var(--handle-width);
+  height: 100vh;
+}
+
+#hand-v {
+  left: calc(var(--handv) - var(--handle-width-half));
+  top: 0;
+  width: var(--handle-width);
+  height: var(--handh);
+}
+
+#hand-h {
+  top: calc(var(--handh) - var(--handle-width-half));
+  left: var(--handex);
+  width: calc(100vw - var(--handex));
+  height: var(--handle-width);
+}
