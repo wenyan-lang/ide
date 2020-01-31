@@ -1,4 +1,4 @@
-# 斋 - Online IDE for wenyan-lang
+# 文言齋 - Online IDE for wenyan-lang
 
 https://wenyan-ide.netlify.com/
 
