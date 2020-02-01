@@ -60,7 +60,7 @@ const Config = Storage('wenyan-ide-config', {
   hideImported: true,
   strict: false,
   showInvisibles: false,
-  tabSize: 4,
+  tabSize: 2,
   preferSpace: false,
 }, EMBED ? null : localStorage)
 
@@ -277,7 +277,7 @@ function registerHandlerEvents(handler, set) {
       }
     };
 
-    const touchHanlder = event => {
+    const touchHandler = event => {
       if (event.touches.length) {
         var x = event.touches[0].clientX;
         var y = event.touches[0].clientY;
@@ -288,14 +288,14 @@ function registerHandlerEvents(handler, set) {
 
     const clear = () => {
       document.body.removeEventListener("mousemove", mouseHandler);
-      document.body.removeEventListener("touchmove", touchHanlder);
+      document.body.removeEventListener("touchmove", touchHandler);
       document.body.removeEventListener("mouseup", clear);
       document.body.removeEventListener("touchend", clear);
       document.body.removeEventListener("touchcancel", clear);
     };
 
     document.body.addEventListener("mousemove", mouseHandler);
-    document.body.addEventListener("touchmove", touchHanlder);
+    document.body.addEventListener("touchmove", touchHandler);
     document.body.addEventListener("mouseup", clear);
     document.body.addEventListener("touchend", clear);
     document.body.addEventListener("touchcancel", clear);
@@ -607,7 +607,9 @@ function updateCompiled(code) {
   );
 
   if (Config.lang === "js") {
-    jsCM.setValue(js_beautify(showcode));
+    jsCM.setValue(js_beautify(showcode, {
+      indent_size: 2,
+    }));
   } else {
     jsCM.setValue(code);
   }
@@ -844,6 +846,8 @@ editorCM = CodeMirror(document.getElementById("in"), {
   lineNumbers: true,
   theme: "wenyan-light",
   styleActiveLine: true,
+  tabSize: 2,
+  indentWithTabs: true,
   showInvisibles: Config.showInvisibles,
   extraKeys: {
     "Shift-Enter": crun,
@@ -858,6 +862,7 @@ jsCM = CodeMirror(document.getElementById("js"), {
   mode: "javascript",
   lineNumbers: true,
   theme: "wenyan-light",
+  tabSize: 2,
   styleActiveLine: true
 });
 
