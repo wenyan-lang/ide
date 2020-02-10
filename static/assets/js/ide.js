@@ -584,9 +584,14 @@ function loadPackages() {
   }
 }
 
+let iframeInitiated = false
+
 function resetOutput() {
-  outIframe.onload = undefined;
-  outIframe.contentWindow.location.reload();
+  if (iframeInitiated) {
+    outIframe.onload = undefined;
+    outIframe.contentWindow.location.reload();
+  }
+  iframeInitiated = true
   outIframe.classList.toggle("hidden", false);
   outRender.classList.toggle("hidden", true);
   downloadRenderBtn.classList.toggle("hidden", true);
@@ -654,55 +659,9 @@ function sendToParent(data) {
 }
 
 function send(data) {
-  var is_safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  if (!is_safari) {
-    outIframe.onload = () => {
-      try {
-        var win = outIframe.contentWindow;
-      } catch (e) {
-        var win = outIframe.contentWindow;
-      }
-      outIframe.contentWindow.postMessage(data, "*");
-    };
-  } else {
-    // FU safari, why can't you just work
-    // every fix involving iframe seem to break, so here we go
-    /*HACK*/ for (var i = 0; i < 100; i++) {
-      /*HACK*/ clearInterval(i);
-      /*HACK*/
-    }
-    /*HACK*/ outIframe.style.width = "0px";
-    /*HACK*/ outIframe.style.height = "0px";
-    /*HACK*/ outIframe.style.opacity = 0;
-    /*HACK*/ outIframe.style.pointerEvents = "none";
-    /*HACK*/
-    /*HACK*/ var outdiv = document.getElementById("out");
-    /*HACK*/ if (!outdiv) {
-      /*HACK*/ outdiv = document.createElement("div");
-      /*HACK*/ outdiv.id = "out";
-      /*HACK*/ outdiv.style.height = "calc(100% - 35px)";
-      /*HACK*/ outdiv.style.overflow = "scroll";
-      /*HACK*/ document.getElementById("out-outer").appendChild(outdiv);
-      /*HACK*/
-    } else {
-      /*HACK*/ outdiv.innerText = "";
-      /*HACK*/
-    }
-    /*HACK*/ const { text, code, options } = data;
-    /*HACK*/ try {
-      /*HACK*/ Wenyan.evalCompiled(code, {
-        /*HACK*/ ...options,
-        /*HACK*/ output: (...args) =>
-        (outdiv.innerText += args.join(" ") + "\n")
-      /*HACK*/
-    });
-      /*HACK*/
-    } catch (e) {
-      /*HACK*/ outdiv.innerText += e.toString();
-      /*HACK*/ console.error(e);
-      /*HACK*/
-    }
-  }
+  outIframe.onload = () => {
+    outIframe.contentWindow.postMessage(data, "*");
+  };
 }
 
 function executeCode(code) {
