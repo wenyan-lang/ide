@@ -51,16 +51,16 @@ let jsCM;
 
 function CheckMigration() {
   return new Promise((resolve, reject) => {
+    if (localStorage.getItem('wenyan-ide-migrated') === 'true') {
+      return resolve()
+    }
+
     const iframe = document.createElement('iframe')
     iframe.src = 'https://wy-lang.org/__migrate__'
-    iframe.style = 'opacity: 0'
+    iframe.style = 'opacity:0;pointer-event:none;'
     document.body.appendChild(iframe)
 
     const handler = (e) => {
-      if (localStorage.getItem('wenyan-ide-migrated') === 'true') {
-        return resolve()
-      }
-
       const { key, value } = e.data
       if (key === 'wenyang-ide') {
         if (value) {
@@ -94,7 +94,7 @@ function CheckMigration() {
 
 if (!EMBED)
   await CheckMigration()
-  
+
 // ========== Configs ==========
 
 window.Config = Storage('wenyan-ide-config', {
