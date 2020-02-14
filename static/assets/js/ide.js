@@ -313,7 +313,10 @@ function initEmbed() {
         if (idx >= 0)
           customUIs[idx] = value
       } else {
-        customUIs.push(value)
+        if (Array.isArray(value))
+          customUIs.push(...value)
+        else
+          customUIs.push(value)
       }
       updateCustomUIs()
     } else {
@@ -351,13 +354,15 @@ function updateCustomUIs() {
       iconEl.classList = 'iconify'
       iconEl.dataset.icon = icon.includes(':') ? icon : `mdi:${icon}`
       iconEl.dataset.inline = 'false'
-      button.classList = 'icon custom'
+      button.classList.add('icon')
       button.appendChild(iconEl)
     }
-    else {
-      button.classList = 'custom'
-      button.innerText = text
+    if (text) {
+      const textEl = document.createElement('span')
+      textEl.innerText = text
+      button.appendChild(textEl)
     }
+    button.classList.add('custom')
     button.dataset.id = id
     button.onclick = e => sendCustomButtonClick(id, e)
 

@@ -80,7 +80,7 @@ window.addEventListener('message', (e) => {
 })
 ```
 
-### Make Custom UIs
+### Custom Buttons
 
 Adding custom icon buttons to the UI is also possible
 

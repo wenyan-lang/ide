@@ -42,8 +42,8 @@ body {
 }
 
 .bar {
-  height: 20px;
-  padding: 7px 10px;
+  height: 24px;
+  padding: 5px 10px ;
   background: #f1f1f1;
   border: 1px solid gainsboro;
   z-index: 1000;
@@ -60,6 +60,7 @@ body {
   display: inline-block;
   color: #777;
   padding: 0 10px;
+  line-height: 24px;
 }
 
 .bar .right-aligned {
@@ -322,10 +323,9 @@ button.icon {
   padding: 0;
   text-align: center;
   width: 26px;
-  font-size: 16px;
-  line-height: 16px;
+  font-size: 17px;
+  line-height: 17px;
   cursor: pointer;
-  padding-top: 1px;
 }
 
 button.icon > svg {
