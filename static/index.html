@@ -35,7 +35,10 @@
   <script src="https://wy-lang.org/dist/examples.js"></script>
   <script src="https://wy-lang.org/dist/render.js"></script>
   <script src="/assets/js/storage.js"></script>
-  <style>.invisible{visibility: hidden;}</style>
+  <style>
+    .invisible{visibility:hidden;}
+    .hidden{visibility:collapse;}
+  </style>
 </head>
 
 <body class="invisible">
@@ -76,11 +79,11 @@
         <span class="iconify" data-icon="mdi:play" data-inline="false"></span>
       </button>
       <button id="compile">Compile</button>
+      <span id="custom-editor-left" class="hidden"></span>
       <button id="config-strict" class="checkbox" data-config="strict">
         <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
         <label>Typecheck</label>
       </button>
-      <span id="custom-editor-left" class="hidden"></span>
       <div id="custom-editor-right" class="hidden right-aligned"></div>
       <div class="right-aligned hide-embed">
         <button id="delete-current" class="icon">        
@@ -133,6 +136,7 @@
   <div id="out-outer">
     <div class="bar" id="out-bar">
       <span class="title">Output</span>
+      <span id="custom-output-left" class="hidden"></span>
       <button id="config-output-hanzi" class="checkbox" data-config="outputHanzi">
         <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
         <label>Print Hanzi</label>
@@ -141,7 +145,6 @@
         <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
         <label>Use 文淵閣 Packages</label>
       </button>
-      <span id="custom-output-left" class="hidden"></span>
       <div id="custom-output-right" class="hidden right-aligned"></div>
       <div class="right-aligned hide-embed">
         <button id="rend">Render Book</button>
