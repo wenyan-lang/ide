@@ -40,14 +40,15 @@ let handv = window.innerWidth * 0.6;
 let handh = window.innerHeight * 0.7;
 let handex = window.innerWidth * 0.15;
 
-let currentFile = {};
-let renderedSVGs = [];
-let examples = {};
-let cache = {};
-let snippets = [];
-let savingLock = false; // to ignore changes made from switching files
-let editorCM;
-let jsCM;
+let currentFile = {}
+let renderedSVGs = []
+let examples = {}
+let cache = {}
+let snippets = []
+let savingLock = false // to ignore changes made from switching files
+let editorCM
+let jsCM
+let customUIs = []
 
 function CheckMigration() {
   return new Promise((resolve, reject) => {
@@ -304,12 +305,71 @@ function initEmbed() {
       crun()
     } else if (action === 'clear') {
       resetOutput()
+    } else if (action === 'custom') {
+      if (field === 'clear') {
+        customUIs = []
+      } else if (field === 'modify') {
+        const idx = customUIs.findIndex(i=>i.name === value.name)
+        if (idx >= 0)
+          customUIs[idx] = value
+      } else {
+        customUIs.push(value)
+      }
+      updateCustomUIs()
     } else {
       throw new Error('Invalid command ' + JSON.stringify(e.data))
     }
   })
 }
 
+function updateCustomUIs() {
+  const conatiners = [
+    'custom-editor-left',
+    'custom-editor-right',
+    'custom-output-left',
+    'custom-output-right',
+  ]
+  for (const c of conatiners)
+    document.getElementById(c).innerHTML = ''
+  
+  for (const config of customUIs) {
+    const {
+      name,
+      icon,
+      type = 'button',
+      bar = 'editor',
+      align = 'left',
+    } = config
+
+    const container = `custom-${bar}-${align}`
+
+    const iconEl = document.createElement('span')
+    iconEl.classList = 'iconify'
+    iconEl.dataset.icon = `mdi:${icon}`
+    iconEl.dataset.inline = 'false'
+    const button = document.createElement('button')
+    button.classList = 'icon custom'
+    button.appendChild(iconEl)
+    button.onclick = e => sendCustomButtonClick(name, e)
+
+    const el = document.getElementById(container)
+    if (el)
+      el.appendChild(button)
+  }
+
+  for (const c of conatiners) {
+    const el = document.getElementById(c)
+    el.classList.toggle('hidden', !el.innerHTML)
+  }
+}
+
+function sendCustomButtonClick(name, event) {
+  sendToParent({
+    action: 'custom',
+    name,
+    event: JSON.parse(JSON.stringify(event))
+  })
+}
 
 function registerHandlerEvents(handler, set) {
   function start(e) {
@@ -702,8 +762,12 @@ function compile() {
 }
 
 function sendToParent(data) {
-  if (window.parent !== window)
-    window.parent.postMessage(data, '*')
+  if (window.parent !== window) {
+    window.parent.postMessage({
+      source: 'wenyan-ide',
+      ...data
+    }, '*')
+  }
 }
 
 function send(data) {
@@ -878,7 +942,6 @@ editorCM.on("change", e => {
 
   if (EMBED) {
     sendToParent({
-      source: 'wenyan-ide',
       action: 'change',
       value: editorCM.getValue()
     })

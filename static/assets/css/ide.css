@@ -325,6 +325,7 @@ button.icon {
   font-size: 16px;
   line-height: 16px;
   cursor: pointer;
+  padding-top: 1px;
 }
 
 button.icon > svg {

@@ -6,7 +6,7 @@ https://ide.wy-lang.org/
 
 ## Embed IDE
 
-You can embed the Online IDE into your own website by using [iframe](https://www.w3schools.com/tags/tag_iframe.asp).
+You can embed the Online IDE into your own website by using [iframe](https://www.w3schools.com/tags/tag_iframe.asp). You can check out the [live demo](https://ide.wy-lang.org/embed_demo) for more details.
 
 ```html
 <iframe src="https://ide.wy-lang.org/embed" height="300" width="500"></iframe>
@@ -73,6 +73,37 @@ window.addEventListener('message', (e) => {
   if (e.data.source === 'wenyan-ide') {
     if (e.data.action === 'change') {
       console.log('Code changed to ' + e.data.value)
+    }
+  }
+})
+```
+
+### Make Custom UIs
+
+You can add icon buttons to the UI
+
+```js
+// config
+editor.contentWindow.postMessage({ 
+  action: 'custom', 
+  value: {
+    name: 'my-custom-button',
+    icon: 'cog', // icon name follows https://iconify.design/
+    
+    /* --- Optional configs --- */
+    // type: 'button', // Current only supports `button`
+    // bar: 'editor',
+    // align: 'left',
+  },
+}, '*')
+```
+
+```js
+// receive
+window.addEventListener('message', (e) => {
+  if (e.data.source === 'wenyan-ide') {
+    if (e.data.action === 'custom' && e.data.name === 'my-custom-button') {
+      console.log('My custom button got clicked!')
     }
   }
 })

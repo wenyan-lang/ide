@@ -1,0 +1,109 @@
+<body>
+  <style>
+    html, body {
+      padding: 10px;
+      font-family: sans-serif;
+    }
+    iframe {
+      border: 1px solid #ddd;
+    }
+  </style>
+
+  <h1>Wenyan Online IDE Embed Demo</h1>
+
+  <a href="https://github.com/wenyan-lang/ide/static/embed_demo.html">Source</a>
+  ·
+  <a href="https://github.com/wenyan-lang/ide">Documentaion</a>
+
+  <br>
+  <br>
+
+  <iframe id="editor" src='/embed?autorun&title=%E5%95%8F%E5%A4%A9%E5%9C%B0%E5%A5%BD%E5%9C%A8&code=%E5%90%BE%E6%9C%89%E4%B8%80%E8%A8%80%E3%80%82%E6%9B%B0%E3%80%8C%E3%80%8C%E5%95%8F%E5%A4%A9%E5%9C%B0%E5%A5%BD%E5%9C%A8%E3%80%82%E3%80%8D%E3%80%8D%E3%80%82%E6%9B%B8%E4%B9%8B%E3%80%82&show-bars' height="400" width="600"></iframe>
+
+  <br>
+  <br>
+  <button id='dark'>Toggle Dark</button>
+  <button id='bars'>Toggle Bars</button>
+  <button id='compile'>Toggle Compile Panel</button>
+  <button id='output'>Toggle Ouput Panel</button>
+  <button id='configs'>Toggle Configs</button>
+  <button id='custom'>Toggle Custom Buttons</button>
+  <br>
+  <br>
+  <button id='run'>Run</button>
+  <button id='clear'>Clear</button>
+  <button id='title'>Change Title</button>
+  <br>
+  <br>
+
+  <textarea id='out' cols='83' rows='20' readonly></textarea>
+  <script>
+    const editor = document.getElementById('editor')
+    const out = document.getElementById('out')
+    let dark = false
+    let compile = false
+    let hideOutput = false
+    let bars = true
+    let large = false
+    let configs = false
+    let custom = false
+
+    window.addEventListener('message', (e) => {
+      if (e.data.source === 'wenyan-ide') {
+        if (e.data.action === 'change') {
+          out.value = e.data.value
+          console.log('Code changed to ' + e.data.value)
+        }
+        if (e.data.action === 'custom') {
+          alert(`Custom button ${e.data.name} got clicked!`)
+        }
+      }
+    })
+
+    function send(data){
+      editor.contentWindow.postMessage(data, '*')
+    }
+
+    document.getElementById('dark').onclick = () => {
+      dark = !dark
+      send({ action: 'config', field: 'dark', value: dark })
+    }
+    document.getElementById('bars').onclick = () => {
+      bars = !bars
+      send({ action: 'config', field: 'showBars', value: bars })
+    }
+    document.getElementById('compile').onclick = () => {
+      compile = !compile
+      send({ action: 'config', field: 'showCompile', value: compile })
+    }
+    document.getElementById('output').onclick = () => {
+      hideOutput = !hideOutput
+      send({ action: 'config', field: 'hideOutput', value: hideOutput })
+    }
+    document.getElementById('configs').onclick = () => {
+      configs = !configs
+      send({ action: 'config', field: 'showConfigs', value: configs })
+    }
+    document.getElementById('custom').onclick = () => {
+      custom = !custom
+      if (!custom) {
+        send({ action: 'custom', field: 'clear' })
+      } else {
+        bars = true
+        send({ action: 'config', field: 'showBars', value: bars })
+        send({ action: 'custom', value: { name: '1', icon: 'numeric-1-circle-outline', align: 'left' }})
+        send({ action: 'custom', value: { name: '2', icon: 'numeric-2-circle-outline', align: 'right' }})
+        send({ action: 'custom', value: { name: '3', icon: 'numeric-3-circle-outline', align: 'left', bar: 'output' }})
+        send({ action: 'custom', value: { name: '4', icon: 'numeric-4-circle-outline', align: 'right', bar: 'output' }})
+      }
+    }
+    document.getElementById('run').onclick = () => {
+      send({ action: 'run' })
+    }
+    document.getElementById('title').onclick = () => {
+      const title = prompt('New title', '')
+      if (title)
+        send({ action: 'title', value: title })
+    }
+  </script>
+</body>
