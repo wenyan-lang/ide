@@ -625,7 +625,13 @@ function downloadRenders() {
 }
 
 function toggleHelp() {
+  document.getElementById("setting-panel").classList.toggle("hidden", true);
   document.getElementById("help-panel").classList.toggle("hidden");
+}
+
+function toggleSettingPanel() {
+  document.getElementById("help-panel").classList.toggle("hidden", true);
+  document.getElementById("setting-panel").classList.toggle("hidden");
 }
 
 function renameCurrentFile() {
@@ -1012,6 +1018,7 @@ document.getElementById("crun").onclick = crun;
 document.getElementById("new-file").onclick = createNewFile;
 document.getElementById("download-current").onclick = downloadCurrentFile;
 document.getElementById("help-button").onclick = toggleHelp;
+document.getElementById("setting-button").onclick = toggleSettingPanel;
 document.getElementById("rend").onclick = render;
 downloadRenderBtn.onclick = downloadRenders;
 deleteBtn.onclick = deleteCurrentFile;

@@ -6,8 +6,7 @@ body {
 }
 
 .embed #hand-ex,
-.embed:not(.show-configs) .checkbox,
-.embed:not(.show-configs) .dropdown,
+.embed:not(.show-configs) #setting-button,
 .embed:not(.show-compile) #hand-v,
 .embed:not(.show-compile) #js-outer,
 .embed:not(.show-compile) #compile,
@@ -240,10 +239,20 @@ ul.nested.active {
   padding: 16px 14px;
 }
 
+.panel > * {
+  vertical-align: middle;
+}
+
 .panel .title {
   opacity: 0.5;
   font-size: 1.1em;
   padding: 0 5px;
+}
+
+.panel .subtitle {
+  opacity: 0.5;
+  font-size: 0.8em;
+  padding: 10px 5px 3px 5px;
 }
 
 .panel .section {
@@ -265,10 +274,28 @@ ul.nested.active {
   line-height: 26px;
 }
 
+.panel button.dropdown {
+  margin-top: 2px;
+  margin-bottom: 5px;
+}
+
+.panel button.checkbox {
+  padding: 0;
+  margin: 3px 0 3px 4px;
+}
+
 #help-panel {
   position: fixed;
   top: 35px;
   right: 45px;
+  width: 300px;
+  z-index: 1000;
+}
+
+#setting-panel {
+  position: fixed;
+  top: 35px;
+  right: 10px;
   width: 300px;
   z-index: 1000;
 }
@@ -330,6 +357,10 @@ button.icon {
 
 button.icon > svg {
   margin-top: -0.2rem;
+}
+
+button.icon * {
+  vertical-align: middle;
 }
 
 button.checkbox {
@@ -400,6 +431,7 @@ button.dropdown:hover label {
 
 .hidden {
   display: none;
+  pointer-events: none;
 }
 
 .show-invisibles .cm-tab {

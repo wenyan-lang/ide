@@ -37,7 +37,6 @@
   <script src="/assets/js/storage.js"></script>
   <style>
     .invisible{visibility:hidden;}
-    .hidden{visibility:collapse;}
   </style>
 </head>
 
@@ -80,10 +79,6 @@
       </button>
       <button id="compile">Compile</button>
       <span id="custom-editor-left" class="hidden"></span>
-      <button id="config-strict" class="checkbox" data-config="strict">
-        <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
-        <label>Typecheck</label>
-      </button>
       <div id="custom-editor-right" class="hidden right-aligned"></div>
       <div class="right-aligned hide-embed">
         <button id="delete-current" class="icon">        
@@ -104,29 +99,13 @@
       <button id="run" class="icon">
         <span class="iconify" data-icon="mdi:play" data-inline="false"></span>
       </button>
-      <button class="dropdown" id="config-romanize" data-config="romanizeIdentifiers">
-        <label>Romanization</label>
-        <span class="value">none</span>
-        <span class="iconify" data-icon="mdi:menu-down" data-inline="false"></span>
-        <select></select>
-      </button>
-      <button class="dropdown" id="config-lang" data-config="lang" experiment="true">
-        <span class="value">Javascript</span>
-        <span class="iconify" data-icon="mdi:menu-down" data-inline="false"></span>
-        <select></select>
-      </button>
-      <button id="cofig-hide-imported" class="checkbox" data-config="hideImported">
-        <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
-        <label>Hide Imported</label>
-      </button>
       
       <div class="right-aligned">
         <button id="help-button" class="icon hide-embed">
           <span class="iconify" data-icon="mdi:help-circle-outline" data-inline="false"></span>
         </button>
-        <button id="config-dark" class="icon" data-config="dark">
-          <span id="dark-icon-night" class="iconify" data-icon="mdi:weather-night" data-inline="false"></span>
-          <span id="dark-icon-sunny" class="iconify hidden" data-icon="mdi:weather-sunny" data-inline="false"></span>
+        <button id="setting-button" class="icon hide-embed">
+          <span class="iconify" data-icon="mdi:cog" data-inline="false"></span>
         </button>
       </div>
     </div>
@@ -137,14 +116,6 @@
     <div class="bar" id="out-bar">
       <span class="title">Output</span>
       <span id="custom-output-left" class="hidden"></span>
-      <button id="config-output-hanzi" class="checkbox" data-config="outputHanzi">
-        <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
-        <label>Print Hanzi</label>
-      </button>
-      <button id="config-enable-packages" class="checkbox" data-config="enablePackages">
-        <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
-        <label>Use 文淵閣 Packages</label>
-      </button>
       <div id="custom-output-right" class="hidden right-aligned"></div>
       <div class="right-aligned hide-embed">
         <button id="rend">Render Book</button>
@@ -173,6 +144,52 @@
     <br><br>
 
     <div class="details">All changes are auto-saved.</div>
+  </div>
+
+  <div id="setting-panel" class="panel hidden">
+    <div class="title">Setting</div>
+
+    <div class="subtitle">Editor</div>
+    <button id="config-dark" class="icon" data-config="dark">
+      <span id="dark-icon-night" class="iconify" data-icon="mdi:weather-night" data-inline="false"></span>
+      <span id="dark-icon-sunny" class="iconify hidden" data-icon="mdi:weather-sunny" data-inline="false"></span>
+    </button>
+    <button id="config-show-invisibles" class="checkbox" data-config="showInvisibles">
+      <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
+      <label>Show Invisibles</label>
+    </button>
+
+    <div class="subtitle">Compiling</div>
+    <button class="dropdown" id="config-romanize" data-config="romanizeIdentifiers">
+      <label>Romanization</label>
+      <span class="value">none</span>
+      <span class="iconify" data-icon="mdi:menu-down" data-inline="false"></span>
+      <select></select>
+    </button>
+    <button class="dropdown" id="config-lang" data-config="lang">
+      <span class="value">Javascript</span>
+      <span class="iconify" data-icon="mdi:menu-down" data-inline="false"></span>
+      <select></select>
+    </button>
+    <br>
+    <button id="config-strict" class="checkbox" data-config="strict">
+      <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
+      <label>Typecheck</label>
+    </button>
+    <button id="cofig-hide-imported" class="checkbox" data-config="hideImported">
+      <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
+      <label>Hide Imported</label>
+    </button>
+    <button id="config-enable-packages" class="checkbox" data-config="enablePackages">
+      <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
+      <label>Use 文淵閣 Packages</label>
+    </button>
+
+    <div class="subtitle">Executing</div>
+    <button id="config-output-hanzi" class="checkbox" data-config="outputHanzi">
+      <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
+      <label>Print Hanzi</label>
+    </button>
   </div>
 
   <div id="package-info-panel" class="panel hidden">
