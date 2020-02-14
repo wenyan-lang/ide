@@ -327,10 +327,19 @@ button.icon {
   cursor: pointer;
 }
 
+button.icon > svg {
+  margin-top: -0.2rem;
+}
+
 button.checkbox {
   border: none;
   background: none;
   cursor: pointer;
+  margin-top: 0.15rem;
+}
+button.checkbox label {
+  font-size: 1.1em;
+  margin-left: 0.2rem;
 }
 button.checkbox * {
   line-height: 100%;
@@ -378,7 +387,6 @@ button.dropdown label {
   padding-right: 6px;
   margin-right: 3px;
   width: 16px;
-  margin-bottom: 1px;
 }
 
 button.dropdown .iconify {

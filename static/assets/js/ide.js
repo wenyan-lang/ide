@@ -49,9 +49,55 @@ let savingLock = false; // to ignore changes made from switching files
 let editorCM;
 let jsCM;
 
+function CheckMigration() {
+  return new Promise((resolve, reject) => {
+    if (localStorage.getItem('wenyan-ide-migrated') === 'true') {
+      return resolve()
+    }
+
+    const iframe = document.createElement('iframe')
+    iframe.src = 'https://wy-lang.org/__migrate__'
+    iframe.style = 'opacity:0;pointer-event:none;'
+    document.body.appendChild(iframe)
+
+    const handler = (e) => {
+      const { key, value } = e.data
+      if (key === 'wenyang-ide') {
+        if (value) {
+          const obj = JSON.parse(value)
+          let set = true
+          if (localStorage.getItem('wenyan-ide-files'))
+            set = confirm('Migrating from wy-lang.org/ide.\n\nData already exists. Do you want to override?')
+          
+          if (set) {
+            localStorage.setItem('wenyan-ide-files', JSON.stringify(obj.files))
+            localStorage.setItem('wenyan-ide-config', JSON.stringify(obj.config))
+          }
+        }
+
+        localStorage.setItem('wenyan-ide-migrated', 'true')
+
+        window.removeEventListener('message', handler, false);
+        iframe.remove()
+        resolve()
+      }
+    }
+    window.addEventListener('message', handler, false);
+
+    iframe.onload = () => {
+      iframe.contentWindow.postMessage({ key: 'wenyang-ide' }, '*')
+    }
+  })
+}
+
+(async () => {
+
+if (!EMBED)
+  await CheckMigration()
+
 // ========== Configs ==========
 
-const Config = Storage('wenyan-ide-config', {
+window.Config = Storage('wenyan-ide-config', {
   lang: "js",
   romanizeIdentifiers: "none",
   dark: false,
@@ -64,15 +110,15 @@ const Config = Storage('wenyan-ide-config', {
   preferSpace: false,
 }, EMBED ? null : localStorage)
 
-const WygStore = Storage('wenyan-ide-wyg', {
+window.WygStore = Storage('wenyan-ide-wyg', {
   packages: [],
   last_updated: -Infinity
 })
 
-const Files = Storage('wenyan-ide-files', {
+window.Files = Storage('wenyan-ide-files', {
 }, EMBED ? null : localStorage)
 
-const EmbedConfig = Storage('', {
+window.EmbedConfig = Storage('', {
   showConfigs: false,
   showBars: false,
   showCompile: false,
@@ -584,9 +630,14 @@ function loadPackages() {
   }
 }
 
+let iframeInitiated = false
+
 function resetOutput() {
-  outIframe.onload = undefined;
-  outIframe.contentWindow.location.reload();
+  if (iframeInitiated) {
+    outIframe.onload = undefined;
+    outIframe.contentWindow.location.reload();
+  }
+  iframeInitiated = true
   outIframe.classList.toggle("hidden", false);
   outRender.classList.toggle("hidden", true);
   downloadRenderBtn.classList.toggle("hidden", true);
@@ -656,55 +707,9 @@ function sendToParent(data) {
 }
 
 function send(data) {
-  var is_safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  if (!is_safari) {
-    outIframe.onload = () => {
-      try {
-        var win = outIframe.contentWindow;
-      } catch (e) {
-        var win = outIframe.contentWindow;
-      }
-      outIframe.contentWindow.postMessage(data, "*");
-    };
-  } else {
-    // FU safari, why can't you just work
-    // every fix involving iframe seem to break, so here we go
-    /*HACK*/ for (var i = 0; i < 100; i++) {
-      /*HACK*/ clearInterval(i);
-      /*HACK*/
-    }
-    /*HACK*/ outIframe.style.width = "0px";
-    /*HACK*/ outIframe.style.height = "0px";
-    /*HACK*/ outIframe.style.opacity = 0;
-    /*HACK*/ outIframe.style.pointerEvents = "none";
-    /*HACK*/
-    /*HACK*/ var outdiv = document.getElementById("out");
-    /*HACK*/ if (!outdiv) {
-      /*HACK*/ outdiv = document.createElement("div");
-      /*HACK*/ outdiv.id = "out";
-      /*HACK*/ outdiv.style.height = "calc(100% - 35px)";
-      /*HACK*/ outdiv.style.overflow = "scroll";
-      /*HACK*/ document.getElementById("out-outer").appendChild(outdiv);
-      /*HACK*/
-    } else {
-      /*HACK*/ outdiv.innerText = "";
-      /*HACK*/
-    }
-    /*HACK*/ const { text, code, options } = data;
-    /*HACK*/ try {
-      /*HACK*/ Wenyan.evalCompiled(code, {
-        /*HACK*/ ...options,
-        /*HACK*/ output: (...args) =>
-        (outdiv.innerText += args.join(" ") + "\n")
-      /*HACK*/
-    });
-      /*HACK*/
-    } catch (e) {
-      /*HACK*/ outdiv.innerText += e.toString();
-      /*HACK*/ console.error(e);
-      /*HACK*/
-    }
-  }
+  outIframe.onload = () => {
+    outIframe.contentWindow.postMessage(data, "*");
+  };
 }
 
 function executeCode(code) {
@@ -965,3 +970,4 @@ else {
 setView();
 
 document.body.classList.toggle('invisible')
+})()
