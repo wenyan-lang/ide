@@ -334,8 +334,9 @@ function updateCustomUIs() {
   
   for (const config of customUIs) {
     const {
-      name,
+      id,
       icon,
+      text,
       type = 'button',
       bar = 'editor',
       align = 'left',
@@ -343,14 +344,22 @@ function updateCustomUIs() {
 
     const container = `custom-${bar}-${align}`
 
-    const iconEl = document.createElement('span')
-    iconEl.classList = 'iconify'
-    iconEl.dataset.icon = `mdi:${icon}`
-    iconEl.dataset.inline = 'false'
     const button = document.createElement('button')
-    button.classList = 'icon custom'
-    button.appendChild(iconEl)
-    button.onclick = e => sendCustomButtonClick(name, e)
+
+    if (icon) {
+      const iconEl = document.createElement('span')
+      iconEl.classList = 'iconify'
+      iconEl.dataset.icon = icon.includes(':') ? icon : `mdi:${icon}`
+      iconEl.dataset.inline = 'false'
+      button.classList = 'icon custom'
+      button.appendChild(iconEl)
+    }
+    else {
+      button.classList = 'custom'
+      button.innerText = text
+    }
+    button.dataset.id = id
+    button.onclick = e => sendCustomButtonClick(id, e)
 
     const el = document.getElementById(container)
     if (el)
@@ -363,10 +372,10 @@ function updateCustomUIs() {
   }
 }
 
-function sendCustomButtonClick(name, event) {
+function sendCustomButtonClick(id, event) {
   sendToParent({
     action: 'custom',
-    name,
+    id,
     event: JSON.parse(JSON.stringify(event))
   })
 }

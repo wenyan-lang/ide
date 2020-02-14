@@ -55,7 +55,7 @@
           console.log('Code changed to ' + e.data.value)
         }
         if (e.data.action === 'custom') {
-          alert(`Custom button ${e.data.name} got clicked!`)
+          alert(`Custom button ${e.data.id} got clicked!`)
         }
       }
     })
@@ -91,10 +91,10 @@
       } else {
         bars = true
         send({ action: 'config', field: 'showBars', value: bars })
-        send({ action: 'custom', value: { name: '1', icon: 'numeric-1-circle-outline', align: 'left' }})
-        send({ action: 'custom', value: { name: '2', icon: 'numeric-2-circle-outline', align: 'right' }})
-        send({ action: 'custom', value: { name: '3', icon: 'numeric-3-circle-outline', align: 'left', bar: 'output' }})
-        send({ action: 'custom', value: { name: '4', icon: 'numeric-4-circle-outline', align: 'right', bar: 'output' }})
+        send({ action: 'custom', value: { id: '1', icon: 'numeric-1-circle-outline', align: 'left' }})
+        send({ action: 'custom', value: { id: '2', icon: 'numeric-2-circle-outline', align: 'right' }})
+        send({ action: 'custom', value: { id: '3', text: 'Button #3', align: 'left', bar: 'output' }})
+        send({ action: 'custom', value: { id: '4', icon: 'numeric-4-circle-outline', align: 'right', bar: 'output' }})
       }
     }
     document.getElementById('run').onclick = () => {

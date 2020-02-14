@@ -89,13 +89,8 @@ Adding custom icon buttons to the UI is also possible
 editor.contentWindow.postMessage({ 
   action: 'custom', 
   value: {
-    name: 'my-custom-button',
+    id: 'my-custom-button',
     icon: 'cog', // icon name follows https://iconify.design/
-    
-    /* --- Optional configs --- */
-    // type: 'button', // Current only supports `button`
-    // bar: 'editor',
-    // align: 'left',
   },
 }, '*')
 ```
@@ -104,9 +99,19 @@ editor.contentWindow.postMessage({
 // receive
 window.addEventListener('message', (e) => {
   if (e.data.source === 'wenyan-ide') {
-    if (e.data.action === 'custom' && e.data.name === 'my-custom-button') {
+    if (e.data.action === 'custom' && e.data.id === 'my-custom-button') {
       console.log('My custom button got clicked!')
     }
   }
 })
 ```
+
+#### Custom UI Options
+
+| Field | Description | Default | 
+| --- | --- | --- |
+| `id` | The id of the button | **Required** |
+| `icon` | The icon name follows [the iconify naming system](https://iconify.design/) | One of `icon` and `text` required |
+| `bars` | Can be `editor` or `output` | `editor` |
+| `align` | Place at left or right | `left` |
+| `type` | Only support button for now | `button` |
