@@ -1,4 +1,4 @@
-# 文言齋 - Online IDE for wenyan-lang
+# 文言齋 - Online IDE for [wenyan-lang](https://github.com/wenyan-lang/wenyan)
 
 https://ide.wy-lang.org/
 
@@ -6,7 +6,9 @@ https://ide.wy-lang.org/
 
 ## Embed IDE
 
-You can embed the Online IDE into your own website by using [iframe](https://www.w3schools.com/tags/tag_iframe.asp). You can check out the [live demo](https://ide.wy-lang.org/embed_demo) for more details.
+You can embed the Online IDE into your own website by using [iframe](https://www.w3schools.com/tags/tag_iframe.asp). 
+
+Check out the [live demo](https://ide.wy-lang.org/embed_demo) for more details.
 
 ```html
 <iframe src="https://ide.wy-lang.org/embed" height="300" width="500"></iframe>
@@ -14,9 +16,9 @@ You can embed the Online IDE into your own website by using [iframe](https://www
 
 The basic URL is https://ide.wy-lang.org/embed
 
-You can config the IDE by using query strings.
-
 ### Query Options
+
+Config the IDE by using query strings.
 
 | Field | Description | Default | 
 | --- | --- | --- |
@@ -38,7 +40,7 @@ Here are some example usages:
 
 ### iFrame Communication
 
-You can get more controls over iframe by
+Get more controls over iframe by
 
 ```html
 <iframe src="https://ide.wy-lang.org/embed" id="editor"></iframe>
@@ -80,7 +82,7 @@ window.addEventListener('message', (e) => {
 
 ### Make Custom UIs
 
-You can add icon buttons to the UI
+Adding custom icon buttons to the UI is also possible
 
 ```js
 // config
