@@ -124,6 +124,7 @@ window.EmbedConfig = Storage('', {
   showBars: false,
   showCompile: false,
   hideOutput: false,
+  readonly: false,
   title: '',
   code: '',
 }, null)
@@ -271,6 +272,11 @@ function initEmbed() {
     loadFile()
   })
 
+  EmbedConfig.on('readonly', v => {
+    jsCM.setOption('readOnly', v)
+    editorCM.setOption('readOnly', v)
+  })
+
   updateConfigFromQuery(Config)
   updateConfigFromQuery(EmbedConfig)
 
@@ -312,6 +318,8 @@ function initEmbed() {
         const idx = customUIs.findIndex(i=>i.name === value.name)
         if (idx >= 0)
           customUIs[idx] = value
+      } else if (field === 'set') {
+        customUIs = value
       } else {
         if (Array.isArray(value))
           customUIs.push(...value)

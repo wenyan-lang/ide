@@ -29,7 +29,7 @@ Config the IDE by using query strings.
 | `show-configs` | Show the configs buttons | `false` |
 | `show-bars` | Show action bars in editor | `false` |
 | `hide-output` | Hide output panel | `false` |
-| `readonly` | Make file readonly **WIP** | `false` |
+| `readonly` | Make file readonly | `false` |
 | `dark` | Use dark theme | `false` |
 | `output-hanzi` | Output numbers as hanzi | `false` |
 

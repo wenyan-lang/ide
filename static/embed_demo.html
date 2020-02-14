@@ -28,6 +28,7 @@
   <button id='output'>Toggle Ouput Panel</button>
   <button id='configs'>Toggle Configs</button>
   <button id='custom'>Toggle Custom Buttons</button>
+  <button id='readonly'>Toggle Readonly</button>
   <br>
   <br>
   <button id='run'>Run</button>
@@ -47,6 +48,7 @@
     let large = false
     let configs = false
     let custom = false
+    let readonly = false
 
     window.addEventListener('message', (e) => {
       if (e.data.source === 'wenyan-ide') {
@@ -83,6 +85,10 @@
     document.getElementById('configs').onclick = () => {
       configs = !configs
       send({ action: 'config', field: 'showConfigs', value: configs })
+    }
+    document.getElementById('readonly').onclick = () => {
+      readonly = !readonly
+      send({ action: 'config', field: 'readonly', value: readonly })
     }
     document.getElementById('custom').onclick = () => {
       custom = !custom
