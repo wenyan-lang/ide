@@ -5,6 +5,7 @@ body {
   --bar-height: 10px;
   --handle-width: 9px;
   --handle-width-half: calc(var(--handle-width) / 2);
+  background: white;
 }
 
 #in, #js {
@@ -44,6 +45,7 @@ body {
   top: calc(var(--handh) + var(--bar-height));
   width: calc(100vw - var(--handex));
   height: calc(calc(100vh - var(--handh)) - var(--bar-height));
+  z-index: 100;
 }
 
 #hand-ex {

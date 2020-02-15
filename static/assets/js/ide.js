@@ -32,7 +32,8 @@ const explorerPackages = document.getElementById("explorer-packages");
 const outIframe = document.getElementById("out-iframe");
 const outRender = document.getElementById("out-render");
 const deleteBtn = document.getElementById("delete-current");
-const fileNameSpan = document.getElementById("current-file-name");
+const currentFileName = document.getElementById("current-file-name");
+const currentFileAuthor = document.getElementById("current-file-author");
 const downloadRenderBtn = document.getElementById("download-render");
 const packageInfoPanel = document.getElementById("package-info-panel");
 
@@ -126,6 +127,7 @@ window.EmbedConfig = Storage('', {
   hideOutput: false,
   readonly: false,
   title: '',
+  author: '',
   code: '',
 }, null)
 
@@ -220,7 +222,7 @@ function initConfigComponents() {
 function getBarHeight() {
   if (EMBED && !EmbedConfig.showBars)
     return 0
-  return 36
+  return 35
 }
 
 function initEmbed() {
@@ -304,6 +306,11 @@ function initEmbed() {
     } else if (action === 'title') {
       currentFile.name = value
       loadFile()
+    } else if (action === 'author') {
+      currentFile.author = value
+      loadFile()
+    } else if (action === 'info') {
+      sendCurrentToParent()
     } else if (action === 'code') {
       currentFile.code = value
       loadFile()
@@ -568,7 +575,10 @@ function loadFile(name = currentFile.name) {
   editorCM.setValue(currentFile.code || "");
   savingLock = false;
   document.title = (currentFile.alias || currentFile.name) + TITLE;
-  fileNameSpan.innerText = currentFile.alias || currentFile.name;
+  currentFileName.innerText = currentFile.alias || currentFile.name;
+  if (currentFile.author)
+    currentFileAuthor.innerText = `by ${currentFile.author}`;
+  currentFileAuthor.classList.toggle('hidden', !currentFile.author) 
   updateExplorerList();
   deleteBtn.classList.toggle("hidden", !!currentFile.readonly);
 
@@ -643,7 +653,8 @@ function toggleSettingPanel() {
 }
 
 function renameCurrentFile() {
-  if (currentFile.readonly) return;
+  if (currentFile.readonly || EmbedConfig.readonly) 
+    return
   const name = prompt("Rename", currentFile.alias || currentFile.name);
   if (name) {
     delete Files[currentFile.name];
@@ -652,6 +663,16 @@ function renameCurrentFile() {
     Files[name] = currentFile;
     openFile(name);
   }
+  sendCurrentToParent()
+}
+
+function changeCurrentFileAuthor() {
+  if (currentFile.readonly || EmbedConfig.readonly) 
+    return
+  const author = prompt("Rename", currentFile.author || '')
+  currentFile.author = author
+  openFile()
+  sendCurrentToParent()
 }
 
 function showHint() {
@@ -814,6 +835,13 @@ function executeCode(code) {
   });
 }
 
+function sendCurrentToParent() {
+  sendToParent({
+    action: 'info',
+    value: currentFile
+  })
+}
+
 function run() {
   resetOutput();
   executeCode(jsCM.getValue());
@@ -968,13 +996,6 @@ jsCM.setSize(null, "100%");
 editorCM.on("change", e => {
   if (savingLock) return;
 
-  if (EMBED) {
-    sendToParent({
-      action: 'change',
-      value: editorCM.getValue()
-    })
-  }
-
   if (!currentFile.readonly) {
     currentFile.code = editorCM.getValue();
     saveFile();
@@ -996,6 +1017,9 @@ editorCM.on("change", e => {
     currentFile = newFile;
     openFile(name);
   }
+
+  if (EMBED)
+    sendCurrentToParent()
 });
 
 editorCM.on("keyup", (cm, event) => {
@@ -1030,7 +1054,8 @@ document.getElementById("setting-button").onclick = toggleSettingPanel;
 document.getElementById("rend").onclick = render;
 downloadRenderBtn.onclick = downloadRenders;
 deleteBtn.onclick = deleteCurrentFile;
-fileNameSpan.onclick = renameCurrentFile;
+currentFileName.onclick = renameCurrentFile;
+currentFileAuthor.onclick = changeCurrentFileAuthor;
 
 window.addEventListener("resize", setView);
 if (!EMBED)

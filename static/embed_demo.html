@@ -52,9 +52,9 @@
 
     window.addEventListener('message', (e) => {
       if (e.data.source === 'wenyan-ide') {
-        if (e.data.action === 'change') {
-          out.value = e.data.value
-          console.log('Code changed to ' + e.data.value)
+        if (e.data.action === 'info') {
+          out.value = e.data.value.code
+          console.log('Info updated ', e.data.value)
         }
         if (e.data.action === 'custom') {
           alert(`Custom button ${e.data.id} got clicked!`)
