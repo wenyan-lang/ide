@@ -2,6 +2,13 @@
 <html>
 <head>
   <style>body{margin: 0;padding: 10px;overflow: auto}#out{margin:0}</style>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/assets/js/sw.js');
+      })
+    }
+  </script>
   <script src="https://wy-lang.org/dist/execute.js"></script>
 </head>
 <body>
