@@ -58,7 +58,8 @@ body {
 .bar .title {
   display: inline-block;
   color: #777;
-  padding: 0 10px;
+  margin: 0 5px;
+  padding: 0 5px;
   line-height: 22px;
   cursor: default;
 }
@@ -66,7 +67,9 @@ body {
 .bar .subtitle {
   display: inline-block;
   color: #999;
-  padding: 0 10px 0 0;
+  padding: 0 5px;
+  margin-left: -5px;
+  margin-right: 5px;
   line-height: 22px;
   font-size: 0.9em;
   font-style: italic;
@@ -85,9 +88,19 @@ body {
   border-left: 1px solid gainsboro;
 }
 
+body:not(.readonly) #in-bar .title,
+body:not(.readonly) #in-bar .subtitle {
+  cursor: text;
+  border-radius: 3px;
+}
+
+body:not(.readonly) #in-bar .title:hover,
+body:not(.readonly) #in-bar .subtitle:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
 #current-file-name {
   color: unset;
-  padding-right: 10px;
 }
 
 #out-iframe {

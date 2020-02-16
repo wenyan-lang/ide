@@ -341,13 +341,13 @@ function initEmbed() {
 }
 
 function updateCustomUIs() {
-  const conatiners = [
+  const containers = [
     'custom-editor-left',
     'custom-editor-right',
     'custom-output-left',
     'custom-output-right',
   ]
-  for (const c of conatiners)
+  for (const c of containers)
     document.getElementById(c).innerHTML = ''
   
   for (const config of customUIs) {
@@ -379,7 +379,10 @@ function updateCustomUIs() {
       button.appendChild(textEl)
     }
     button.classList.add('custom')
-    button.attributes.toggle('disabled', disabled)
+    if (disabled)
+      button.setAttribute('disabled', '')
+    else
+      button.removeAttribute('disabled', '')
     button.dataset.id = id
     button.onclick = e => sendCustomButtonClick(id, e)
 
@@ -388,7 +391,7 @@ function updateCustomUIs() {
       el.appendChild(button)
   }
 
-  for (const c of conatiners) {
+  for (const c of containers) {
     const el = document.getElementById(c)
     el.classList.toggle('hidden', !el.innerHTML)
   }
@@ -583,6 +586,7 @@ function loadFile(name = currentFile.name) {
   currentFileAuthor.classList.toggle('hidden', !currentFile.author) 
   updateExplorerList();
   deleteBtn.classList.toggle("hidden", !!currentFile.readonly);
+  document.body.classList.toggle("readonly", currentFile.readonly || EmbedConfig.readonly);
 
   if (newFile) {
     if (currentFile.readonly) {
@@ -672,6 +676,9 @@ function changeCurrentFileAuthor() {
   if (currentFile.readonly || EmbedConfig.readonly) 
     return
   const author = prompt("Rename", currentFile.author || '')
+  if (!author)
+    return
+
   currentFile.author = author
   openFile()
   sendCurrentToParent()
