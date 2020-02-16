@@ -442,6 +442,10 @@ button.dropdown .iconify {
 button.dropdown:hover label {
   border-right: 1px solid grey;
 }
+button[disabled] {
+  opacity: 0.8;
+  pointer-events: none;
+}
 
 .hidden {
   display: none !important;

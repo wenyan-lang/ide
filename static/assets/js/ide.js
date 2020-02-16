@@ -358,6 +358,7 @@ function updateCustomUIs() {
       type = 'button',
       bar = 'editor',
       align = 'left',
+      disabled = false,
     } = config
 
     const container = `custom-${bar}-${align}`
@@ -372,12 +373,13 @@ function updateCustomUIs() {
       button.classList.add('icon')
       button.appendChild(iconEl)
     }
-    if (text) {
+    else if (text) {
       const textEl = document.createElement('span')
       textEl.innerText = text
       button.appendChild(textEl)
     }
     button.classList.add('custom')
+    button.attributes.toggle('disabled', disabled)
     button.dataset.id = id
     button.onclick = e => sendCustomButtonClick(id, e)
 
@@ -1043,6 +1045,13 @@ registerHandlerEvents(dhex, ({ x }) => {
   x = Math.min(x, EXPLORER_WIDTH_MAX, handv - EDITOR_WIDTH_MIN);
   handex = x;
 });
+
+window.addEventListener('keydown', evt => {
+  if (evt.key === 's' && (evt.ctrlKey || evt.metaKey)) {
+    sendToParent({ action: 'save' })
+    evt.preventDefault()
+  }
+})
 
 document.getElementById("compile").onclick = compile;
 document.getElementById("run").onclick = run;
