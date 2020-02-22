@@ -933,6 +933,7 @@ function showPackageInfo(pkg) {
 function closePackageInfo() {
   packageInfoPanel.classList.toggle("hidden", true);
 }
+window.closePackageInfo = closePackageInfo;
 
 function importPackageIntoCurrent({ name }) {
   editorCM.setValue(`吾嘗觀「「${name}」」之書。\n${editorCM.getValue()}`);
