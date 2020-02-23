@@ -282,13 +282,6 @@ function initEmbed() {
   updateConfigFromQuery(Config)
   updateConfigFromQuery(EmbedConfig)
 
-  window.addEventListener("resize", () => {
-    if (!EmbedConfig.showCompile)
-      handv = window.innerWidth;
-    if (EmbedConfig.hideOutput)
-      handh = window.innerHeight;
-  })
-
   handex = 0;
 
   if (query.get('autorun') != null)
@@ -449,6 +442,13 @@ function setView() {
   const W = window.innerWidth;
   const H = window.innerHeight;
 
+  if (EMBED) {
+    if (!EmbedConfig.showCompile)
+      handv = W;
+    if (EmbedConfig.hideOutput)
+      handh = H;
+  }
+      
   document.body.style.setProperty('--handh', `${handh / H * 100}vh`);
   document.body.style.setProperty('--handex', `${handex / W * 100}vw`);
   document.body.style.setProperty('--handv', `${handv / W * 100}vw`);
