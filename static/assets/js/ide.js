@@ -13,7 +13,7 @@ const EDITOR_WIDTH_MIN = 150;
 const EDITOR_HEIGHT_MIN = 36;
 const OUTPUT_HEIGHT_MIN = 36;
 const AUTOCOMPLETE_TRIGGER_REGEX = /[a-zA-Z_'"\\\/\*\+-]+$/;
-const AUTOCOMPLETE_TRIGGER_NUMBER = /-?[0-9,]*.?[0-9,]+$/;
+const AUTOCOMPLETE_TRIGGER_NUMBER = /-?[0-9,]*\.?[0-9,]+$/;
 const CONTROL_KEYCODES = [13, 37, 38, 39, 40, 9, 27]; // Enter, Arrow Keys, etc
 
 if (EMBED) console.debug('Working in Embedded mode')
