@@ -12,7 +12,8 @@ const EXPLORER_WIDTH_MAX = 400;
 const EDITOR_WIDTH_MIN = 150;
 const EDITOR_HEIGHT_MIN = 36;
 const OUTPUT_HEIGHT_MIN = 36;
-const AUTOCOMPLETE_TRIGGER_REGEX = /[\d\w\.,'"\/]+$/;
+const AUTOCOMPLETE_TRIGGER_REGEX = /[a-zA-Z_'"\\\/\*\+-]+$/;
+const AUTOCOMPLETE_TRIGGER_NUMBER = /-?[0-9,]*.?[0-9,]+$/;
 const CONTROL_KEYCODES = [13, 37, 38, 39, 40, 9, 27]; // Enter, Arrow Keys, etc
 
 if (EMBED) console.debug('Working in Embedded mode')
@@ -167,6 +168,13 @@ function init() {
   }
 
   snippets = [
+    { text: "批曰。", trigger: "//" },
+    { text: "批曰。「「", trigger: "/*" },
+    { text: "」」", trigger: "*/" },
+    { text: "加", trigger: "+" },
+    { text: "減", trigger: "-" },
+    { text: "乘", trigger: "*" },
+    { text: "除", trigger: "/" },
     { text: "。", trigger: "." },
     { text: "、", trigger: "," },
     { text: "「", trigger: "'" },
@@ -689,25 +697,31 @@ function showHint() {
     editorCM,
     () => {
       const cursor = editorCM.getCursor();
-      let start = cursor.ch - 5;
+      let start = cursor.ch - 30;
       const text = editorCM.getRange({ line: cursor.line, ch: start }, cursor);
       const end = cursor.ch;
       const line = cursor.line;
 
-      const match = text.match(AUTOCOMPLETE_TRIGGER_REGEX);
-
-      if (!match) return undefined;
-
-      const list =
-        match[0] === "/"
+      let match
+      if (match = text.match(AUTOCOMPLETE_TRIGGER_NUMBER)) {
+        return {
+          list: [Wenyan.num2hanzi(+match[0].replace(/,/g, ''))],
+          from: CodeMirror.Pos(line, end - match[0].length),
+          to: CodeMirror.Pos(line, end)
+        }
+      }
+      else if (match = text.match(AUTOCOMPLETE_TRIGGER_REGEX)) {
+        const list =
+        match[0] === "\\"
           ? snippets
           : snippets.filter(item => item.trigger.startsWith(match[0]));
 
-      return {
-        list: list,
-        from: CodeMirror.Pos(line, end - match[0].length),
-        to: CodeMirror.Pos(line, end)
-      };
+        return {
+          list: list,
+          from: CodeMirror.Pos(line, end - match[0].length),
+          to: CodeMirror.Pos(line, end)
+        };
+      }
     },
     { completeSingle: false }
   );
