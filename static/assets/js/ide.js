@@ -319,6 +319,8 @@ function initEmbed() {
       crun()
     } else if (action === 'clear') {
       resetOutput()
+    } else if (action === 'set-view'){
+      document.body.style.setProperty('--handh', `${value}vh`);
     } else if (action === 'custom') {
       if (field === 'clear') {
         customUIs = []
