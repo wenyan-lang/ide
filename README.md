@@ -4,6 +4,12 @@ https://ide.wy-lang.org/
 
 ![](https://github.com/wenyan-lang/wenyan/raw/master/screenshots/screenshot02.png)
 
+## Import external scripts
+
+Import scripts to IDE by query string
+
+[https://ide.wy-lang.org?**import**&title=問天地好在&code=吾有一言。曰「「問天地好在。」」。書之。](https://ide.wy-lang.org/?import&title=%E5%95%8F%E5%A4%A9%E5%9C%B0%E5%A5%BD%E5%9C%A8&code=%E5%90%BE%E6%9C%89%E4%B8%80%E8%A8%80%E3%80%82%E6%9B%B0%E3%80%8C%E3%80%8C%E5%95%8F%E5%A4%A9%E5%9C%B0%E5%A5%BD%E5%9C%A8%E3%80%82%E3%80%8D%E3%80%8D%E3%80%82%E6%9B%B8%E4%B9%8B%E3%80%82)
+
 ## Embed IDE
 
 You can embed the Online IDE into your own website by using [iframe](https://www.w3schools.com/tags/tag_iframe.asp). 

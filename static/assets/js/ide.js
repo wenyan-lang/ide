@@ -512,6 +512,7 @@ function initExplorer() {
 function updateExplorerList() {
   if (EMBED)
     return
+
   exlistExamples.innerHTML = "";
   for (let file of Object.values(examples)) {
     exlistExamples.appendChild(createExplorerEntry(file));
@@ -535,7 +536,8 @@ function createExplorerEntry({ name, alias }) {
   const item = document.createElement("li");
   item.value = name;
 
-  if (currentFile.name === name) item.classList.add("active");
+  if (currentFile.name === name && !currentFile.shadow) 
+    item.classList.add("active");
 
   const a = document.createElement("span");
   const n = document.createElement("span");
@@ -610,14 +612,19 @@ function loadFile(name = currentFile.name) {
 function parseUrlQuery() {
   const query = new URLSearchParams(location.search);
 
-  loadFile(query.get("file") || "mandelbrot");
-  updateExperimentFeatures(query.get("experiment") != null);
-}
-
-function updateExperimentFeatures(value) {
-  document
-    .querySelectorAll('[experiment="true"]')
-    .forEach(i => i.classList.toggle("hidden", !value));
+  if (query.get('import') !== undefined) {
+    currentFile.name = query.get('name')
+    currentFile.alias = query.get('alias') || query.get('name')
+    currentFile.author = query.get('author')
+    currentFile.code = query.get('code')
+    currentFile.source = query.get('source')
+    currentFile.readonly = true
+    currentFile.shadow = true
+    openFile()
+  }
+  else {
+    loadFile(query.get("file") || "mandelbrot");
+  }
 }
 
 function deleteCurrentFile() {
