@@ -864,6 +864,7 @@ function sendToParent(data) {
 function send(data) {
   outIframe.onload = () => {
     outIframe.contentWindow.postMessage(data, "*");
+    outIframe.contentWindow.document.body.style = `color: ${themeCache.forground}`
   };
 }
 
@@ -914,6 +915,8 @@ function crun() {
   }
 }
 
+let themeCache = {}
+
 function updateTheme(name, overrides) {
   name = name || Config.theme
 
@@ -923,7 +926,7 @@ function updateTheme(name, overrides) {
     return
   }
 
-  const theme = Object.assign({},themeMeta.theme, overrides)
+  const theme = themeCache = Object.assign({},themeMeta.theme, overrides)
 
   document.body.style = ''
 
@@ -931,6 +934,10 @@ function updateTheme(name, overrides) {
     document.body.style.setProperty(`--theme-${k}`,v)
 
   document.body.classList.toggle('dark-theme', !!theme.dark)
+
+  themeCache.forground = theme.forground || (theme.dark ? '#fff' : '#000')
+
+  outIframe.contentWindow.document.body.style = `color: ${themeCache.forground}`
 
   setView()
 }
