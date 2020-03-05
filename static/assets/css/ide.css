@@ -10,6 +10,7 @@
   --theme-selected-background: linen;
   --theme-code-foreground: #333;
   --theme-keywords: #E53;
+  --theme-numbers: var(--theme-variables);
   --theme-variables: #248;
   --theme-builtins: #000;
   --theme-operators: #872;
@@ -565,7 +566,7 @@ button[disabled] {
   font-weight: normal;
   font-style: normal;
   text-decoration: none;
-  color: var(--theme-builtins);
+  color: var(--theme-numbers);
 }
 .cm-s-wenyan-light .cm-string {
   font-weight: normal;
@@ -583,7 +584,7 @@ button[disabled] {
   font-weight: normal;
   font-style: normal;
   text-decoration: none;
-  color: var(--theme-variables);
+  color: var(--theme-builtins);
 }
 .cm-s-wenyan-light .cm-type {
   font-weight: normal;

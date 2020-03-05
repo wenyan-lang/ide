@@ -1,6 +1,7 @@
 window.Examples = window.Examples || { examples: [] }
 window.Wenyan = window.Wenyan || { compile: () => null, KEYWORDS: [] }
 window.Wyg = window.Wyg || { list: async () => [] }
+window.Themes = window.Themes || []
 
 // ========== Constants ==========
 
@@ -103,7 +104,6 @@ if (!EMBED)
 window.Config = Storage('wenyan-ide-config', {
   lang: "js",
   romanizeIdentifiers: "none",
-  dark: false,
   enablePackages: true,
   outputHanzi: true,
   hideImported: true,
@@ -111,6 +111,7 @@ window.Config = Storage('wenyan-ide-config', {
   showInvisibles: false,
   tabSize: 2,
   preferSpace: false,
+  theme: 'Wenyan Light'
 }, EMBED ? null : localStorage)
 
 window.WygStore = Storage('wenyan-ide-wyg', {
@@ -165,6 +166,13 @@ function init() {
     opt.value = value;
     opt.innerHTML = display;
     document.querySelector("#config-lang select").appendChild(opt);
+  }
+
+  for (var k of Themes.map(i=>i.name)) {
+    var opt = document.createElement("option");
+    opt.value = k;
+    opt.innerHTML = k;
+    document.querySelector("#config-theme select").appendChild(opt);
   }
 
   snippets = [
@@ -320,7 +328,16 @@ function initEmbed() {
     } else if (action === 'clear') {
       resetOutput()
     } else if (action === 'set-view'){
-      document.body.style.setProperty('--handh', `${value}vh`);
+      handh = window.innerHeight / 100 * value
+      setView()
+    } else if (action === 'theme') {
+      let name = value
+      let theme = undefined
+      if (typeof value !== 'string'){
+        name = 'Custom'
+        theme = value
+      }
+      updateTheme(name, theme)
     } else if (action === 'custom') {
       if (field === 'clear') {
         customUIs = []
@@ -897,18 +914,25 @@ function crun() {
   }
 }
 
-function updateDark() {
-  if (Config.dark) {
-    document.body.style.filter = "invert(0.88)";
-  } else {
-    document.body.style.filter = "invert(0)";
+function updateTheme(name, overrides) {
+  name = name || Config.theme
+
+  const themeMeta = Themes.find(i=>i.name === name)
+  if (!themeMeta && !overrides) {
+    console.warn(`Unknown theme ${name}`)
+    return
   }
-  document
-    .getElementById("dark-icon-sunny")
-    .classList.toggle("hidden", !Config.dark);
-  document
-    .getElementById("dark-icon-night")
-    .classList.toggle("hidden", Config.dark);
+
+  const theme = Object.assign({},themeMeta.theme, overrides)
+
+  document.body.style = ''
+
+  for(const [k, v] of Object.entries(theme))
+    document.body.style.setProperty(`--theme-${k}`,v)
+
+  document.body.classList.toggle('dark-theme', !!theme.dark)
+
+  setView()
 }
 
 function saveFile() {
@@ -1097,7 +1121,7 @@ if (!EMBED)
 initConfigComponents();
 loadPackages();
 
-Config.on('dark', updateDark, true)
+Config.on('theme', () => updateTheme(), true)
 Config.on('hideImported', () => crun())
 Config.on('outputHanzi', () => crun())
 Config.on('romanizeIdentifiers', () => crun())
