@@ -767,15 +767,15 @@ function loadPackages() {
 let iframeInitiated = false
 
 function resetOutput() {
+  outIframe.classList.toggle("hidden", false);
+  outRender.classList.toggle("hidden", true);
+  downloadRenderBtn.classList.toggle("hidden", true);
+  jsCM.setValue('')
   if (iframeInitiated) {
     outIframe.onload = undefined;
     outIframe.contentWindow.location.reload();
   }
   iframeInitiated = true
-  outIframe.classList.toggle("hidden", false);
-  outRender.classList.toggle("hidden", true);
-  downloadRenderBtn.classList.toggle("hidden", true);
-  jsCM.setValue('')
   renderedSVGs = [];
 }
 
@@ -1121,3 +1121,9 @@ setView();
 
 document.body.classList.toggle('invisible')
 })()
+
+// Fix for Safari embedded. I don't know why but it works 🤯
+if (/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) {
+  outIframe.src = '/'
+  outIframe.src = '/__executor__.html'
+}

@@ -1,25 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Executor</title>
   <style>body{margin: 0;padding: 10px;overflow: auto}#out{margin:0}</style>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/assets/js/sw.js');
-      })
-    }
-  </script>
   <script src="https://wy-lang.org/dist/execute.js"></script>
 </head>
 <body>
 <pre id="out"></pre>
 <script>
 const outdiv = document.getElementById('out')
-var geid = document.getElementById;
-document.getElementById = function(x){if (x == "出"){return geid.call(document,"out")}else{return geid.call(document,x)}};
+const geid = document.getElementById;
+
+document.getElementById = function(x) {
+  if (x == "出")
+    return geid.call(document, "out")
+  else
+    return geid.call(document, x)
+};
 
 window.addEventListener('message', (e) => {
-  // console.log(e.data)
+  console.log(e.data)
   const { text, code, options } = e.data
   
   if (text)
