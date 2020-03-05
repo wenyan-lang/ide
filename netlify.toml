@@ -1,3 +1,7 @@
+[build]
+  publish = "static"
+  command = "npm run build"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
