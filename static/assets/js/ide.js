@@ -378,6 +378,7 @@ function updateCustomUIs() {
       type = 'button',
       bar = 'editor',
       align = 'left',
+      tooltip,
       disabled = false,
     } = config
 
@@ -399,6 +400,8 @@ function updateCustomUIs() {
       button.appendChild(textEl)
     }
     button.classList.add('custom')
+    if (tooltip)
+      button.dataset.tooltip = tooltip
     if (disabled)
       button.setAttribute('disabled', '')
     else

@@ -52,7 +52,7 @@
     <div class="bar" id="explorer-bar">
       <span class="title">文言 Wenyan</span>
       <div class="right-aligned">
-        <button id="new-file" class="icon">
+        <button id="new-file" class="icon" data-tooltip="New file">
           <span class="iconify" data-icon="mdi:plus" data-inline="false"></span>
         </button>
       </div>
@@ -89,10 +89,10 @@
       <span id="custom-editor-left" class="hidden"></span>
       <div id="custom-editor-right" class="hidden right-aligned"></div>
       <div class="right-aligned hide-embed">
-        <button id="delete-current" class="icon">        
+        <button id="delete-current" data-tooltip="Delete" class="icon">        
           <span class="iconify" data-icon="mdi:trash-can-outline" data-inline="false"></span>
         </button>
-        <button id="download-current" class="icon">
+        <button id="download-current" data-tooltip="Download code" class="icon">
           <span class="iconify" data-icon="mdi:download" data-inline="false"></span>
         </button>
       </div>
@@ -104,15 +104,15 @@
     <div class="bar" id="js-bar">
       <span class="title">Compiled</span>
       &nbsp;
-      <button id="run" class="icon">
+      <button id="run" class="icon" data-tooltip="Run">
         <span class="iconify" data-icon="mdi:play" data-inline="false"></span>
       </button>
       
       <div class="right-aligned">
-        <button id="help-button" class="icon hide-embed">
+        <button id="help-button" data-tooltip="Help" class="icon hide-embed">
           <span class="iconify" data-icon="mdi:help-circle-outline" data-inline="false"></span>
         </button>
-        <button id="setting-button" class="icon hide-embed">
+        <button id="setting-button" data-tooltip="Settings" class="icon hide-embed">
           <span class="iconify" data-icon="mdi:cog" data-inline="false"></span>
         </button>
       </div>

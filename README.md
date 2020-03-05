@@ -36,7 +36,6 @@ Config the IDE by using query strings.
 | `show-bars` | Show action bars in editor | `false` |
 | `hide-output` | Hide output panel | `false` |
 | `readonly` | Make file readonly | `false` |
-| `dark` | Use dark theme | `false` |
 | `output-hanzi` | Output numbers as hanzi | `false` |
 
 Here are some example usages:
@@ -71,6 +70,11 @@ editor.contentWindow.postMessage({ action: 'run' }, '*')
 
 // clear output
 editor.contentWindow.postMessage({ action: 'clear' }, '*')
+
+// change theme
+editor.contentWindow.postMessage({ action: 'theme', value: 'Wenyan Dark' }, '*')
+// or
+editor.contentWindow.postMessage({ action: 'theme', value: { background: '#222' } }, '*')
 ```
 
 #### Receiving
@@ -120,4 +124,5 @@ window.addEventListener('message', (e) => {
 | `icon` | The icon name follows [the iconify naming system](https://iconify.design/) | One of `icon` and `text` required |
 | `bars` | Can be `editor` or `output` | `editor` |
 | `align` | Place at left or right | `left` |
+| `tooltip` | Tooltip to show on button hovered | undefined |
 | `type` | Only support button for now | `button` |

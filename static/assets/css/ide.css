@@ -228,7 +228,6 @@ body:not(.readonly) #in-bar .subtitle:hover {
 }
 
 #explorer {
-  overflow-x: hidden;
   background: var(--theme-background);
 }
 
@@ -527,7 +526,6 @@ button[disabled] {
 /* Add this attribute to the element that needs a tooltip */
 [data-tooltip] {
   position: relative;
-  z-index: 2;
   cursor: pointer;
 }
 
@@ -546,9 +544,9 @@ button[disabled] {
   top: 100%;
   left: 50%;
   margin-top: 5px;
-  padding: 5px 8px;
+  padding: 2px 6px;
   width: auto;
-  font-size: 0.7em;
+  font-size: 0.75em;
   transform: translateX(-50%);
   border-radius: 3px;
   border: 1px solid var(--theme-border);
@@ -556,6 +554,7 @@ button[disabled] {
   color: var(var(--theme-foreground));
   content: attr(data-tooltip);
   text-align: center;
+  z-index: 1000;
 }
 
 /* Show tooltip content on hover */
