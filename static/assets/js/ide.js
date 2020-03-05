@@ -573,6 +573,12 @@ function createExplorerPackageEntry(pkg) {
 function openFile(name) {
   var searchParams = new URLSearchParams(window.location.search);
   if (searchParams.get("file") !== name) {
+    searchParams.delete('import');
+    searchParams.delete('code');
+    searchParams.delete('name');
+    searchParams.delete('title');
+    searchParams.delete('author');
+    searchParams.delete('alias');
     searchParams.set("file", name);
     history.pushState({ file: name }, name, "?" + searchParams.toString());
   }
@@ -613,14 +619,13 @@ function parseUrlQuery() {
   const query = new URLSearchParams(location.search);
 
   if (query.get('import') !== undefined) {
-    currentFile.name = query.get('name')
-    currentFile.alias = query.get('alias') || query.get('name')
+    currentFile.name = query.get('name') || query.get('title') || 'Untitled'
+    currentFile.alias = query.get('alias') || currentFile.name 
     currentFile.author = query.get('author')
     currentFile.code = query.get('code')
-    currentFile.source = query.get('source')
     currentFile.readonly = true
     currentFile.shadow = true
-    openFile()
+    loadFile()
   }
   else {
     loadFile(query.get("file") || "mandelbrot");
@@ -923,6 +928,25 @@ function saveFile() {
     Files[currentFile.name] = currentFile
 }
 
+function duplicateReadonlyFile(newCode) {
+  // make a copy for examples
+  let num = 1;
+  while (Files[`${currentFile.name}_${num}`]) {
+    num += 1;
+  }
+  const name = `${currentFile.name}_${num}`;
+  const newFile = {
+    name: name,
+    alias: currentFile.alias
+      ? `${currentFile.alias}「${Wenyan.num2hanzi(num)}」`
+      : "",
+    code: newCode || currentFile.code,
+  };
+  Files[name] = newFile
+  currentFile = newFile
+  openFile(name)
+}
+
 function render() {
   outRender.innerText = "";
   renderedSVGs = Render.render(
@@ -1033,22 +1057,7 @@ editorCM.on("change", e => {
     currentFile.code = editorCM.getValue();
     saveFile();
   } else {
-    // make a copy for examples
-    let num = 1;
-    while (Files[`${currentFile.name}_${num}`]) {
-      num += 1;
-    }
-    const name = `${currentFile.name}_${num}`;
-    const newFile = {
-      name: name,
-      alias: currentFile.alias
-        ? `${currentFile.alias}「${Wenyan.num2hanzi(num)}」`
-        : "",
-      code: editorCM.getValue()
-    };
-    Files[name] = newFile;
-    currentFile = newFile;
-    openFile(name);
+    duplicateReadonlyFile(editorCM.getValue())
   }
 
   if (EMBED)
