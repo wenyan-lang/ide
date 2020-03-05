@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Wenyan Light",
+    "author": "Official",
+    "theme": {
+      "keywords": "#E53",
+      "variables": "#248",
+      "builtins": "#000",
+      "operators": "#872",
+      "comments": "#666"
+    }
+  },
+  {
+    "name": "Wenyan Dark",
+    "author": "Official",
+    "theme": {
+      "dark": true,
+      "keywords": "#f46646",
+      "variables": "#316be0",
+      "builtins": "#ddd",
+      "operators": "#d3b626",
+      "comments": "#777"
+    }
+  }
+]
