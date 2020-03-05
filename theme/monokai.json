@@ -1,0 +1,18 @@
+{
+  "name": "Monokai",
+  "author": "antfu",
+  "theme": {
+    "dark": true,
+    "background": "#272822",
+    "foreground": "#f8f8f2",
+    "bar-background": "#2d2c27",
+    "handler": "#3e3d3a",
+    "linenumbers": "#d0d0d0",
+    "keywords": "#f92672",
+    "variables": "#a6e22e",
+    "builtins": "#ae81ff",
+    "numbers": "#9effff",
+    "operators": "#e6db74",
+    "comments": "#75715e"
+  }
+}
