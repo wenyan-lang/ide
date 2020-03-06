@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Executor</title>
   <style>body{margin: 0;padding: 10px;overflow: auto}#out{margin:0}</style>
-  <script src="https://wy-lang.org/dist/execute.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/cdn@wenyan-core/execute.min.js"></script>
 </head>
 <body>
 <pre id="out"></pre>
@@ -22,7 +22,6 @@ document.getElementById = function(x) {
 };
 
 window.addEventListener('message', (e) => {
-  console.log(e.data)
   const { text, code, options } = e.data
   
   if (text)

@@ -638,7 +638,7 @@ function loadFile(name = currentFile.name) {
 function parseUrlQuery() {
   const query = new URLSearchParams(location.search);
 
-  if (query.get('import') !== undefined) {
+  if (query.has('import')) {
     currentFile.name = query.get('name') || query.get('title') || 'Untitled'
     currentFile.alias = query.get('alias') || currentFile.name 
     currentFile.author = query.get('author')
@@ -824,7 +824,7 @@ function updateCompiled(code) {
   );
 
   if (Config.lang === "js") {
-    jsCM.setValue(js_beautify(showcode, {
+    jsCM.setValue(beautifier.js(showcode, {
       indent_size: 2,
     }));
   } else {
@@ -879,8 +879,15 @@ function sendToParent(data) {
 function send(data) {
   outIframe.onload = () => {
     outIframe.contentWindow.postMessage(data, "*");
-    outIframe.contentWindow.document.body.style = `color: ${themeCache.forground}`
+    updateIframeStyle()
   };
+}
+
+function updateIframeStyle() {
+  try {
+    outIframe.contentWindow.document.body.style = `color: ${themeCache.forground}`
+  }
+  catch{}
 }
 
 function executeCode(code) {
@@ -952,7 +959,7 @@ function updateTheme(name, overrides) {
 
   themeCache.forground = theme.forground || (theme.dark ? '#fff' : '#000')
 
-  outIframe.contentWindow.document.body.style = `color: ${themeCache.forground}`
+  updateIframeStyle()
 
   setView()
 }
