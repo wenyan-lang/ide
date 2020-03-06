@@ -5,8 +5,10 @@
   "description": "Online IDE for wenyan-lang",
   "main": "index.js",
   "scripts": {
-    "dev": "live-server static --entry-file=index.html --cors",
-    "build": "node ./scripts/build-theme.js"
+    "server": "live-server static --entry-file=index.html --cors",
+    "build": "node ./scripts/build-theme.js",
+    "build:watch": "nodemon ./scripts/build-theme.js -w theme",
+    "dev": "concurrently \"npm run build:watch\" \"npm run server\""
   },
   "keywords": [
     "wenyan",
@@ -16,7 +18,9 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "concurrently": "^5.1.0",
     "fast-glob": "^3.2.2",
-    "live-server": "^1.2.1"
+    "live-server": "^1.2.1",
+    "nodemon": "^2.0.2"
   }
 }

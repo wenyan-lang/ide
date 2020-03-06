@@ -885,7 +885,7 @@ function send(data) {
 
 function updateIframeStyle() {
   try {
-    outIframe.contentWindow.document.body.style = `color: ${themeCache.forground}`
+    outIframe.contentWindow.document.body.style = `color: ${themeCache.foreground}`
   }
   catch{}
 }
@@ -957,7 +957,7 @@ function updateTheme(name, overrides) {
 
   document.body.classList.toggle('dark-theme', !!theme.dark)
 
-  themeCache.forground = theme.forground || (theme.dark ? '#fff' : '#000')
+  themeCache.foreground = theme.foreground || (theme.dark ? '#fff' : '#000')
 
   updateIframeStyle()
 
