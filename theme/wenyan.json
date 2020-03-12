@@ -15,11 +15,13 @@
     "author": "Official",
     "theme": {
       "dark": true,
-      "keywords": "#f46646",
-      "variables": "#316be0",
-      "builtins": "#ddd",
-      "operators": "#d3b626",
-      "comments": "#777"
+      "background":"#1B1B1B",
+      "keywords": "#458797",
+      "variables": "#c4a586",
+      "builtins": "#CCC",
+      "operators": "#CCC",
+      "comments": "#787878",
+      "numbers": "#7886ce"
     }
   }
 ]
