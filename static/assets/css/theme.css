@@ -342,7 +342,6 @@ ul.nested.active {
   position: absolute;
   right: 5px;
   top: 8px;
-  line-height: 26px;
 }
 
 .panel button.dropdown {
@@ -421,8 +420,8 @@ button.icon {
   padding: 0;
   text-align: center;
   width: 26px;
-  font-size: 17px;
-  line-height: 17px;
+  font-size: 18px;
+  line-height: 18px;
   cursor: pointer;
 }
 

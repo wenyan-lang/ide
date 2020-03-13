@@ -1015,6 +1015,33 @@ function CheckMigration() {
       .querySelector(".home-link")
       .classList.toggle("hidden", !pkg.repo);
     packageInfoPanel.querySelector(".home-link").href = Wyg.getRepoRoot(pkg.repo);
+
+    const examples = document.getElementById('packages-examples')
+    examples.innerHTML = ''
+
+    if (pkg.examples && pkg.examples.length) {
+      pkg.examples.forEach(e=> {
+        const button = document.createElement('button')
+        button.innerText = e
+        button.onclick = () => {
+          console.log(`${Wyg.getRepoRawRoot(pkg.repo)}/${e}.wy`)
+          fetch('https://raw.githubusercontent.com/antfu/ziyue-wy/master/%E4%BE%8B%E4%B8%80.wy')
+          .then(r => r.text())
+          .then(r => {
+            packageInfoPanel.classList.toggle("hidden", true)
+            currentFile.name = e
+            currentFile.author = pkg.name
+            currentFile.code = r
+            currentFile.readonly = true
+            currentFile.shadow = true
+            loadFile()
+            crun()
+          })
+        }
+        examples.appendChild(button)
+      })
+    }
+
     packageInfoPanel.classList.toggle("hidden", false);
   }
 

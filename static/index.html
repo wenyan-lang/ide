@@ -49,7 +49,7 @@
     <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/highlight/codemirror.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
     <script src="https://code.iconify.design/1/1.0.0-rc1/iconify.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@wenyanlang/wyg/dist/runtime.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@wenyanlang/wyg@latest/dist/runtime.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-beautify@1.10.3/js/lib/beautifier.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
 
@@ -222,7 +222,7 @@
     </div>
 
     <div id="setting-panel" class="panel hidden">
-      <div class="title">Setting</div>
+      <div class="title">Settings</div>
 
       <div class="subtitle">Editor</div>
       <button class="dropdown" id="config-theme" data-config="theme">
@@ -308,10 +308,10 @@
 
       <br />
 
-      <a class="home-link" href="" target="_blank"
-        ><button>Goto Homepage</button></a
-      >
+      <a class="home-link" href="" target="_blank"><button>Homepage</button></a>
       <button class="import">Import into current script</button>
+
+      <span id="packages-examples"></span>
 
       <button class="close icon" onclick="closePackageInfo()">
         <span class="iconify" data-icon="mdi:close" data-inline="false"></span>
