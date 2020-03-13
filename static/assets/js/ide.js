@@ -326,7 +326,7 @@ function CheckMigration() {
       } else if (action === 'run') {
         crun()
       } else if (action === 'clear') {
-        resetOutput()
+        resetOutput(true)
       } else if (action === 'set-view') {
         handh = window.innerHeight / 100 * value
         setView()
@@ -630,7 +630,7 @@ function CheckMigration() {
       if (currentFile.readonly) {
         crun();
       } else {
-        resetOutput()
+        resetOutput(true)
       }
     }
   }
@@ -798,17 +798,18 @@ function CheckMigration() {
 
   let iframeInitiated = false
 
-  function resetOutput() {
+  function resetOutput(clearCompiled = false) {
     outIframe.classList.toggle("hidden", false);
     outRender.classList.toggle("hidden", true);
     downloadRenderBtn.classList.toggle("hidden", true);
-    jsCM.setValue('')
     if (iframeInitiated) {
       outIframe.onload = undefined;
       outIframe.contentWindow.location.reload();
     }
     iframeInitiated = true
     renderedSVGs = [];
+    if (clearCompiled)
+      jsCM.setValue('')
   }
 
   function updateCompiled(code) {
@@ -833,7 +834,7 @@ function CheckMigration() {
   }
 
   function compile() {
-    resetOutput();
+    resetOutput(true);
     var log = "";
     try {
       let errorLog = "";
@@ -913,7 +914,7 @@ function CheckMigration() {
   }
 
   function crun() {
-    resetOutput();
+    resetOutput(true);
     try {
       let errorOutput = "";
       var code = Wenyan.compile(editorCM.getValue(), {
@@ -924,7 +925,7 @@ function CheckMigration() {
           (errorOutput.innerText += args.join(" ") + "\n"),
         importContext: getImportContext(),
         importCache: cache,
-        strict: Config.strict
+        strict: Config.strirct
       });
 
       updateCompiled(code);
