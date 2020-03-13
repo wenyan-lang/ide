@@ -1026,8 +1026,7 @@ function CheckMigration() {
         const button = document.createElement('button')
         button.innerText = e
         button.onclick = () => {
-          console.log(`${Wyg.getRepoRawRoot(pkg.repo)}/${e}.wy`)
-          fetch('https://raw.githubusercontent.com/antfu/ziyue-wy/master/%E4%BE%8B%E4%B8%80.wy')
+          fetch(`${Wyg.getRepoRawRoot(pkg.repo)}/${e}.wy`)
           .then(r => r.text())
           .then(r => {
             packageInfoPanel.classList.toggle("hidden", true)
