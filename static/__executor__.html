@@ -1,45 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Executor</title>
-  <style>body{margin: 0;padding: 10px;overflow: auto}#out{margin:0}</style>
-  <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/cdn@wenyan-core/execute.min.js"></script>
-</head>
-<body>
-<pre id="out"></pre>
-<script>
-const outdiv = document.getElementById('out')
-const geid = document.getElementById;
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Executor</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 10px;
+        overflow: auto;
+      }
+      #out {
+        margin: 0;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/cdn@wenyan-core/execute.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/css/theme.css" />
+  </head>
+  <body>
+    <pre id="out"></pre>
+    <script>
+      const outdiv = document.getElementById("out");
+      const geid = document.getElementById;
 
-document.getElementById = function(x) {
-  if (x == "出")
-    return geid.call(document, "out")
-  else
-    return geid.call(document, x)
-};
+      document.getElementById = function(x) {
+        if (x == "出") return geid.call(document, "out");
+        else return geid.call(document, x);
+      };
 
-window.addEventListener('message', (e) => {
-  const { text, code, options } = e.data
-  
-  if (text)
-    outdiv.innerText = text
-  
-  if (code) {
-    outdiv.innerText = ""
-    try {
-      Wenyan.evalCompiled(code, {
-        ...options,
-        output: (...args) => outdiv.innerText += args.join(" ") + "\n"
-      });
-    } catch (e) {
-      outdiv.innerText = e.toString();
-      console.error(e);
-    }
-  }
-}, false);
-</script>
-</body>
+      window.addEventListener(
+        "message",
+        e => {
+          const { text, code, options } = e.data;
+
+          if (text) outdiv.innerText = text;
+
+          if (code) {
+            outdiv.innerText = "";
+            try {
+              Wenyan.evalCompiled(code, {
+                ...options,
+                output: (...args) => (outdiv.innerText += args.join(" ") + "\n")
+              });
+            } catch (e) {
+              outdiv.innerText = e.toString();
+              console.error(e);
+            }
+          }
+        },
+        false
+      );
+    </script>
+  </body>
 </html>

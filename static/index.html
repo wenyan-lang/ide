@@ -1,230 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/png" size="32x32" href="/assets/media/favicon-32x32.png">
-  <link rel="icon" type="image/png" size="16x16" href="/assets/media/favicon-16x16.png">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="icon"
+      type="image/png"
+      size="32x32"
+      href="/assets/media/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      size="16x16"
+      href="/assets/media/favicon-16x16.png"
+    />
 
-  <title>文言 Wenyan Online IDE</title>
+    <title>文言 Wenyan Online IDE</title>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/assets/js/sw.js');
-      })
-    }
-  </script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/lib/codemirror.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/addon/hint/show-hint.css" />
-  <link rel='stylesheet' type='text/css' href='/assets/css/ide.css'/>
-  <link rel='stylesheet' type='text/css' href='/assets/css/layout.css'/>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/assets/js/sw.js");
+        });
+      }
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/lib/codemirror.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/addon/hint/show-hint.css"
+    />
+    <link rel="stylesheet" type="text/css" href="/assets/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/ide.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/layout.css" />
 
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/lib/codemirror.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/addon/runmode/runmode.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/addon/mode/simple.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/addon/selection/active-line.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/addon/hint/show-hint.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/mode/javascript/javascript.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/mode/python/python.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/mode/ruby/ruby.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/highlight/codemirror.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
-  <script src="https://code.iconify.design/1/1.0.0-rc1/iconify.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@wenyanlang/wyg/dist/runtime.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/js-beautify@1.10.3/js/lib/beautifier.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
-  
-  <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/cdn@wenyan-core/core.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/cdn@wenyan-core/examples.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/cdn@wenyan-core/render.min.js"></script>
-  <script src="/assets/js/show-invisibles.js"></script>
-  <script src="/assets/js/storage.js"></script>
-  <script src="/assets/js/theme.js"></script>
-  <style>
-    .invisible{visibility:hidden;}
-  </style>
-</head>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/lib/codemirror.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/addon/runmode/runmode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/addon/mode/simple.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/addon/selection/active-line.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/addon/hint/show-hint.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/mode/javascript/javascript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/mode/python/python.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.52.0/mode/ruby/ruby.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/highlight/codemirror.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
+    <script src="https://code.iconify.design/1/1.0.0-rc1/iconify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@wenyanlang/wyg/dist/runtime.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-beautify@1.10.3/js/lib/beautifier.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
 
-<body class="invisible">
-  <div id="ex-outer">
-    <div class="bar" id="explorer-bar">
-      <span class="title">文言 Wenyan</span>
-      <div class="right-aligned">
-        <button id="new-file" class="icon" data-tooltip="New file">
-          <span class="iconify" data-icon="mdi:plus" data-inline="false"></span>
-        </button>
+    <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/cdn@wenyan-core/core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/cdn@wenyan-core/examples.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/wenyan-lang/cdn@wenyan-core/render.min.js"></script>
+    <script src="/assets/js/show-invisibles.js"></script>
+    <script src="/assets/js/storage.js"></script>
+    <script src="/assets/js/theme.js"></script>
+    <style>
+      .invisible {
+        visibility: hidden;
+      }
+    </style>
+  </head>
+
+  <body class="invisible">
+    <div id="ex-outer">
+      <div class="bar" id="explorer-bar">
+        <span class="title">文言 Wenyan</span>
+        <div class="right-aligned">
+          <button id="new-file" class="icon" data-tooltip="New file">
+            <span
+              class="iconify"
+              data-icon="mdi:plus"
+              data-inline="false"
+            ></span>
+          </button>
+        </div>
+      </div>
+      <div id="explorer">
+        <ul id="explorer-list">
+          <li>
+            <div class="caret">My Scripts</div>
+            <ul class="nested active" id="explorer-list-user"></ul>
+          </li>
+          <li>
+            <div class="caret">Examples</div>
+            <ul class="nested active" id="explorer-list-examples"></ul>
+          </li>
+          <li id="explorer-packages">
+            <div class="caret">文淵閣 Packages</div>
+            <ul class="nested active" id="explorer-list-packages"></ul>
+          </li>
+        </ul>
       </div>
     </div>
-    <div id="explorer">
-      <ul id="explorer-list">
-        <li>
-          <div class="caret">My Scripts</div>
-          <ul class="nested active" id="explorer-list-user">
-          </ul>
-        </li>
-        <li>
-          <div class="caret">Examples</div>
-          <ul class="nested active" id="explorer-list-examples">
-          </ul>
-        </li>
-        <li id="explorer-packages">
-          <div class="caret">文淵閣 Packages</div>
-          <ul class="nested active" id="explorer-list-packages">
-          </ul>
-        </li>
-      </ul>
-    </div>
-  </div>
 
-  <div id="in-outer">
-    <div class="bar" id="in-bar">
-      <span id="current-file-name" class="title"></span>
-      <span id="current-file-author" class="subtitle"></span>
-      <button id="crun" class="icon" data-tooltip="Run">
-        <span class="iconify" data-icon="mdi:play" data-inline="false"></span>
+    <div id="in-outer">
+      <div class="bar" id="in-bar">
+        <span id="current-file-name" class="title"></span>
+        <span id="current-file-author" class="subtitle"></span>
+        <button id="crun" class="icon" data-tooltip="Run">
+          <span class="iconify" data-icon="mdi:play" data-inline="false"></span>
+        </button>
+        <button id="compile">Compile</button>
+        <span id="custom-editor-left" class="hidden"></span>
+        <div id="custom-editor-right" class="hidden right-aligned"></div>
+        <div class="right-aligned hide-embed">
+          <button id="delete-current" data-tooltip="Delete" class="icon">
+            <span
+              class="iconify"
+              data-icon="mdi:trash-can-outline"
+              data-inline="false"
+            ></span>
+          </button>
+          <button
+            id="download-current"
+            data-tooltip="Download code"
+            class="icon"
+          >
+            <span
+              class="iconify"
+              data-icon="mdi:download"
+              data-inline="false"
+            ></span>
+          </button>
+        </div>
+      </div>
+      <div id="in"></div>
+    </div>
+
+    <div id="js-outer">
+      <div class="bar" id="js-bar">
+        <span class="title">Compiled</span>
+        &nbsp;
+        <button id="run" class="icon" data-tooltip="Run">
+          <span class="iconify" data-icon="mdi:play" data-inline="false"></span>
+        </button>
+
+        <div class="right-aligned">
+          <button id="help-button" data-tooltip="Help" class="icon hide-embed">
+            <span
+              class="iconify"
+              data-icon="mdi:help-circle-outline"
+              data-inline="false"
+            ></span>
+          </button>
+          <button
+            id="setting-button"
+            data-tooltip="Settings"
+            class="icon hide-embed"
+          >
+            <span
+              class="iconify"
+              data-icon="mdi:cog"
+              data-inline="false"
+            ></span>
+          </button>
+        </div>
+      </div>
+      <div id="js" class="cm-s-wenyan-light"></div>
+    </div>
+
+    <div id="out-outer">
+      <div class="bar" id="out-bar">
+        <span class="title">Output</span>
+        <span id="custom-output-left" class="hidden"></span>
+        <div id="custom-output-right" class="hidden right-aligned"></div>
+        <div class="right-aligned hide-embed">
+          <button id="rend">Render Book</button>
+          <button id="download-render" class="icon">
+            <span
+              class="iconify"
+              data-icon="mdi:download"
+              data-inline="false"
+            ></span>
+          </button>
+        </div>
+      </div>
+      <iframe
+        id="out-iframe"
+        src="/__executor__.html"
+        height="100"
+        width="100"
+      ></iframe>
+      <pre id="out-render"></pre>
+    </div>
+
+    <div id="help-panel" class="panel hidden">
+      <div class="title">Shortcuts</div>
+
+      <table id="shortcut-table">
+        <tr>
+          <td>Shift + Enter</td>
+          <td>Execute</td>
+        </tr>
+        <tr>
+          <td>Alt + Enter</td>
+          <td>Compile</td>
+        </tr>
+      </table>
+
+      <a href="https://github.com/wenyan-lang/wenyan/ide" target="__blank"
+        ><button>Github</button></a
+      >
+      <a href="https://github.com/wenyan-lang/wenyan/wiki" target="__blank"
+        ><button>Wiki</button></a
+      >
+      <a href="https://snippets.wy-lang.org/" target="__blank"
+        ><button>Snippets</button></a
+      >
+      <a href="https://github.com/wenyan-lang/wyg" target="__blank"
+        ><button>文淵閣</button></a
+      >
+
+      <br /><br />
+
+      <div class="details">All changes are auto-saved.</div>
+    </div>
+
+    <div id="setting-panel" class="panel hidden">
+      <div class="title">Setting</div>
+
+      <div class="subtitle">Editor</div>
+      <button class="dropdown" id="config-theme" data-config="theme">
+        <label>Theme</label>
+        <span class="value">Wenyan Light</span>
+        <span
+          class="iconify"
+          data-icon="mdi:menu-down"
+          data-inline="false"
+        ></span>
+        <select></select>
       </button>
-      <button id="compile">Compile</button>
-      <span id="custom-editor-left" class="hidden"></span>
-      <div id="custom-editor-right" class="hidden right-aligned"></div>
-      <div class="right-aligned hide-embed">
-        <button id="delete-current" data-tooltip="Delete" class="icon">        
-          <span class="iconify" data-icon="mdi:trash-can-outline" data-inline="false"></span>
-        </button>
-        <button id="download-current" data-tooltip="Download code" class="icon">
-          <span class="iconify" data-icon="mdi:download" data-inline="false"></span>
-        </button>
-      </div>
-    </div>
-    <div id="in"></div>
-  </div>
-  
-  <div id="js-outer">
-    <div class="bar" id="js-bar">
-      <span class="title">Compiled</span>
-      &nbsp;
-      <button id="run" class="icon" data-tooltip="Run">
-        <span class="iconify" data-icon="mdi:play" data-inline="false"></span>
+      <button
+        id="config-show-invisibles"
+        class="checkbox"
+        data-config="showInvisibles"
+      >
+        <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
+        <label>Show Invisibles</label>
       </button>
-      
-      <div class="right-aligned">
-        <button id="help-button" data-tooltip="Help" class="icon hide-embed">
-          <span class="iconify" data-icon="mdi:help-circle-outline" data-inline="false"></span>
-        </button>
-        <button id="setting-button" data-tooltip="Settings" class="icon hide-embed">
-          <span class="iconify" data-icon="mdi:cog" data-inline="false"></span>
-        </button>
-      </div>
-    </div>
-    <div id="js" class="cm-s-wenyan-light"></div>
-  </div>
-  
-  <div id="out-outer">
-    <div class="bar" id="out-bar">
-      <span class="title">Output</span>
-      <span id="custom-output-left" class="hidden"></span>
-      <div id="custom-output-right" class="hidden right-aligned"></div>
-      <div class="right-aligned hide-embed">
-        <button id="rend">Render Book</button>
-        <button id="download-render" class="icon">
-          <span class="iconify" data-icon="mdi:download" data-inline="false"></span>
-        </button>
-      </div>
-    </div>
-    <iframe id='out-iframe' src='/__executor__.html' height="100" width="100"></iframe>
-    <pre id="out-render"></pre>
-  </div>
 
-  <div id="help-panel" class="panel hidden">
-    <div class="title">Shortcuts</div>
-    
-    <table id="shortcut-table">
-      <tr><td>Shift + Enter</td><td>Execute</td></tr>
-      <tr><td>Alt + Enter</td><td>Compile</td></tr>
-    </table>
+      <div class="subtitle">Compiling</div>
+      <button
+        class="dropdown"
+        id="config-romanize"
+        data-config="romanizeIdentifiers"
+      >
+        <label>Romanization</label>
+        <span class="value">none</span>
+        <span
+          class="iconify"
+          data-icon="mdi:menu-down"
+          data-inline="false"
+        ></span>
+        <select></select>
+      </button>
+      <button class="dropdown" id="config-lang" data-config="lang">
+        <span class="value">Javascript</span>
+        <span
+          class="iconify"
+          data-icon="mdi:menu-down"
+          data-inline="false"
+        ></span>
+        <select></select>
+      </button>
+      <br />
+      <button id="config-strict" class="checkbox" data-config="strict">
+        <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
+        <label>Typecheck</label>
+      </button>
+      <button
+        id="cofig-hide-imported"
+        class="checkbox"
+        data-config="hideImported"
+      >
+        <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
+        <label>Hide Imported</label>
+      </button>
+      <button
+        id="config-enable-packages"
+        class="checkbox"
+        data-config="enablePackages"
+      >
+        <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
+        <label>Use 文淵閣 Packages</label>
+      </button>
 
-    <a href="https://github.com/wenyan-lang/wenyan/ide" target="__blank"><button>Github</button></a>
-    <a href="https://github.com/wenyan-lang/wenyan/wiki" target="__blank"><button>Wiki</button></a>
-    <a href="https://snippets.wy-lang.org/" target="__blank"><button>Snippets</button></a>
-    <a href="https://github.com/wenyan-lang/wyg" target="__blank"><button>文淵閣</button></a>
-
-    <br><br>
-
-    <div class="details">All changes are auto-saved.</div>
-  </div>
-
-  <div id="setting-panel" class="panel hidden">
-    <div class="title">Setting</div>
-
-    <div class="subtitle">Editor</div>
-    <button class="dropdown" id="config-theme" data-config="theme">
-      <label>Theme</label>
-      <span class="value">Wenyan Light</span>
-      <span class="iconify" data-icon="mdi:menu-down" data-inline="false"></span>
-      <select></select>
-    </button>
-    <button id="config-show-invisibles" class="checkbox" data-config="showInvisibles">
-      <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
-      <label>Show Invisibles</label>
-    </button>
-
-    <div class="subtitle">Compiling</div>
-    <button class="dropdown" id="config-romanize" data-config="romanizeIdentifiers">
-      <label>Romanization</label>
-      <span class="value">none</span>
-      <span class="iconify" data-icon="mdi:menu-down" data-inline="false"></span>
-      <select></select>
-    </button>
-    <button class="dropdown" id="config-lang" data-config="lang">
-      <span class="value">Javascript</span>
-      <span class="iconify" data-icon="mdi:menu-down" data-inline="false"></span>
-      <select></select>
-    </button>
-    <br>
-    <button id="config-strict" class="checkbox" data-config="strict">
-      <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
-      <label>Typecheck</label>
-    </button>
-    <button id="cofig-hide-imported" class="checkbox" data-config="hideImported">
-      <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
-      <label>Hide Imported</label>
-    </button>
-    <button id="config-enable-packages" class="checkbox" data-config="enablePackages">
-      <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
-      <label>Use 文淵閣 Packages</label>
-    </button>
-
-    <div class="subtitle">Executing</div>
-    <button id="config-output-hanzi" class="checkbox" data-config="outputHanzi">
-      <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
-      <label>Print Hanzi</label>
-    </button>
-  </div>
-
-  <div id="package-info-panel" class="panel hidden">
-    <div class="title">{name}</div>
-    <div class="section description">{description}</div>
-    <div class="details">
-      by <a class="author">{author}</a>
+      <div class="subtitle">Executing</div>
+      <button
+        id="config-output-hanzi"
+        class="checkbox"
+        data-config="outputHanzi"
+      >
+        <span class="iconify" data-icon="mdi:check" data-inline="false"></span>
+        <label>Print Hanzi</label>
+      </button>
     </div>
 
-    <br>
+    <div id="package-info-panel" class="panel hidden">
+      <div class="title">{name}</div>
+      <div class="section description">{description}</div>
+      <div class="details">by <a class="author">{author}</a></div>
 
-    <a class="home-link" href="" target="_blank"><button>Goto Homepage</button></a>
-    <button class="import">Import into current script</button>
+      <br />
 
-    <button class="close icon" onclick='closePackageInfo()'>
-      <span class="iconify" data-icon="mdi:close" data-inline="false"></span>
-    </button>
-  </div>
+      <a class="home-link" href="" target="_blank"
+        ><button>Goto Homepage</button></a
+      >
+      <button class="import">Import into current script</button>
 
-  <div id="hand-ex"><div id="hand-ex-inner"></div></div>
-  <div id="hand-h"><div id="hand-h-inner"></div></div>
-  <div id="hand-v"><div id="hand-v-inner"></div></div>
+      <button class="close icon" onclick="closePackageInfo()">
+        <span class="iconify" data-icon="mdi:close" data-inline="false"></span>
+      </button>
+    </div>
 
-  <div id="keywords"></div>
+    <div id="hand-ex"><div id="hand-ex-inner"></div></div>
+    <div id="hand-h"><div id="hand-h-inner"></div></div>
+    <div id="hand-v"><div id="hand-v-inner"></div></div>
 
-  <script src="/assets/js/ide.js"></script>
-</body>
+    <div id="keywords"></div>
+
+    <script src="/assets/js/ide.js"></script>
+  </body>
 </html>
