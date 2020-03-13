@@ -1016,10 +1016,12 @@ function CheckMigration() {
       .classList.toggle("hidden", !pkg.repo);
     packageInfoPanel.querySelector(".home-link").href = Wyg.getRepoRoot(pkg.repo);
 
-    const examples = document.getElementById('packages-examples')
-    examples.innerHTML = ''
+    const examples = packageInfoPanel.querySelector('.examples')
+    const examplesButtons = packageInfoPanel.querySelector('.examples-buttons')
 
     if (pkg.examples && pkg.examples.length) {
+      examples.classList.toggle("hidden", false)
+      examplesButtons.innerHTML = '';
       pkg.examples.forEach(e=> {
         const button = document.createElement('button')
         button.innerText = e
@@ -1030,6 +1032,7 @@ function CheckMigration() {
           .then(r => {
             packageInfoPanel.classList.toggle("hidden", true)
             currentFile.name = e
+            currentFile.alias = undefined
             currentFile.author = pkg.name
             currentFile.code = r
             currentFile.readonly = true
@@ -1038,8 +1041,11 @@ function CheckMigration() {
             crun()
           })
         }
-        examples.appendChild(button)
+        examplesButtons.appendChild(button)
       })
+    }
+    else {
+      examples.classList.toggle("hidden", true)
     }
 
     packageInfoPanel.classList.toggle("hidden", false);
