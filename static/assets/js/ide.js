@@ -799,14 +799,16 @@ function CheckMigration() {
   let iframeInitiated = false
 
   function resetOutput(clearCompiled = false) {
-    outIframe.classList.toggle("hidden", false);
+    outIframe.classList.toggle("hidden", true);
     outRender.classList.toggle("hidden", true);
     downloadRenderBtn.classList.toggle("hidden", true);
     if (iframeInitiated) {
-      outIframe.onload = undefined;
       outIframe.contentWindow.location.reload();
     }
     iframeInitiated = true
+    outIframe.onload = () => {
+      updateIframeStyle()
+    }
     renderedSVGs = [];
     if (clearCompiled)
       jsCM.setValue('')
@@ -887,6 +889,7 @@ function CheckMigration() {
   function updateIframeStyle() {
     try {
       updateTheme(null, themeCache, outIframe.contentWindow.document)
+      outIframe.classList.toggle("hidden", false)
     }
     catch{ }
   }
@@ -925,7 +928,7 @@ function CheckMigration() {
           (errorOutput.innerText += args.join(" ") + "\n"),
         importContext: getImportContext(),
         importCache: cache,
-        strict: Config.strirct
+        strict: Config.strict
       });
 
       updateCompiled(code);
