@@ -22,5 +22,8 @@
     "fast-glob": "^3.2.4",
     "live-server": "^1.2.1",
     "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "jszip": "^3.6.0"
   }
 }
