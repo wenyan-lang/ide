@@ -676,16 +676,23 @@ function CheckMigration() {
   }
 
   function downloadRenders() {
+    downloadRenderBtn.disabled = true;
     const name = currentFile.alias || currentFile.name;
     if (renderedSVGs.length === 1) {
       var blob = new Blob([renderedSVGs[0]], {
         type: "image/svg+xml;charset=utf-8"
       });
       saveAs(blob, `${name}.svg`);
+      downloadRenderBtn.disabled = false;
     } else {
+      let zip = new JSZip();
       renderedSVGs.forEach((svg, i) => {
         var blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
-        saveAs(blob, `${name}-${i}.svg`);
+        zip.file(`${name}-${i}.svg`, blob);
+      });
+      zip.generateAsync({type: "blob"}).then((content) => {
+        saveAs(content, `${name}.zip`);
+        downloadRenderBtn.disabled = false;
       });
     }
   }
